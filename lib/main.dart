@@ -3,10 +3,13 @@ import 'package:bukulistrik/ui/pages/add_record_page/add_record_page_binding.dar
 import 'package:bukulistrik/ui/pages/add_record_page/add_record_page_view.dart';
 import 'package:bukulistrik/ui/pages/home_page/home_page_binding.dart';
 import 'package:bukulistrik/ui/pages/home_page/home_page_view.dart';
+import 'package:bukulistrik/ui/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
-void main() {
+void main() async {
+  initializeDateFormatting();
   runApp(const MyApp());
 }
 
@@ -18,9 +21,7 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       title: 'Buku Listrik',
       initialBinding: AppBinding(),
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
+      theme: kAppTheme,
       getPages: [
         GetPage(
           name: '/',

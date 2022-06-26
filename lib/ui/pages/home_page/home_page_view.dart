@@ -1,6 +1,10 @@
+import 'package:bukulistrik/domain/models/computed_record.dart';
 import 'package:bukulistrik/ui/pages/home_page/home_page_controller.dart';
+import 'package:bukulistrik/ui/theme/helper.dart';
+import 'package:bukulistrik/ui/theme/spacing.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:syncfusion_flutter_charts/charts.dart';
 
 class HomePageView extends GetView<HomePageController> {
   const HomePageView({Key? key}) : super(key: key);
@@ -8,73 +12,431 @@ class HomePageView extends GetView<HomePageController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              Obx(
-                () => Column(
-                  children: [
-                    ElevatedButton(
-                      onPressed: () {
-                        controller.calculate();
-                      },
-                      child: const Text('Recalculate'),
-                    ),
-                    Text(controller.calculationTime.value),
-                    Text(controller.averageConsumption.value),
-                  ],
-                ),
+      body: CustomScrollView(
+        slivers: [
+          SliverAppBar(
+            // elevation: 0,
+            pinned: true,
+            centerTitle: true,
+            title: Text(
+              'Buku Listrik',
+              style: TextStyle(
+                color: Get.theme.colorScheme.onPrimary,
+                fontSize: 18,
               ),
-              Table(
-                children: [
-                  // table header
-                  const TableRow(
-                    children: [
-                      Text('Tanggal'),
-                      Text('kW H'),
-                      Text('Penggunaan'),
-                      Text('Biaya Penggunaan'),
-                      Text('kW H dalam Rp'),
-                      Text('Rupiah/kW H'),
-                      Text('Pembelian'),
-                    ],
+              textAlign: TextAlign.center,
+            ),
+          ),
+          SliverToBoxAdapter(
+            child: Container(
+              color: Get.theme.colorScheme.primary,
+              padding: const EdgeInsets.only(
+                left: Spacing.padding * 8,
+                right: Spacing.padding * 8,
+                top: Spacing.padding * 4,
+                bottom: Spacing.padding,
+              ),
+              child: AverageUsage(usage: controller.averageConsumption.value),
+            ),
+          ),
+          SliverToBoxAdapter(
+            child: _buildChart(),
+          ),
+          SliverToBoxAdapter(
+            child: _buildRangeSelector(),
+          ),
+          SliverToBoxAdapter(
+            child: Stack(
+              clipBehavior: Clip.none,
+              children: [
+                Container(
+                  color: Get.theme.colorScheme.primary,
+                  width: double.infinity,
+                  height: 50,
+                ),
+                Positioned(
+                  left: Spacing.width * 8,
+                  right: Spacing.width * 8,
+                  child: Container(
+                    height: 100,
                     decoration: BoxDecoration(
-                      border: Border(
-                        bottom: BorderSide(
-                          color: Colors.black,
-                          width: 1,
+                      color: Get.theme.colorScheme.surface,
+                      borderRadius: Spacing.rounded,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Get.theme.colorScheme.shadow,
+                          blurRadius: 10,
+                          offset: const Offset(0, 10),
                         ),
-                      ),
-                    ),
-                  ),
-                  // table body
-                  ...controller.computedRecords.map(
-                    (c) => TableRow(
-                      children: [
-                        Text(
-                            '${c.record.createdAt.day}/${c.record.createdAt.month}/${c.record.createdAt.year}'),
-                        Text(c.record.availableKwh.toStringAsFixed(2)),
-                        Text(c.dailyUsage.toStringAsFixed(2)),
-                        Text(c.dailyCost.toStringAsFixed(2)),
-                        Text(c.costOfAvailableKwh.toStringAsFixed(0)),
-                        Text(c.totalCostPerKwh.toStringAsFixed(1)),
-                        Text(
-                            '${c.record.addedKwh ?? ''}@${c.record.addedKwhPrice ?? ''}'),
                       ],
                     ),
                   ),
-                ],
+                )
+              ],
+            ),
+          ),
+          const SliverToBoxAdapter(
+            child: SizedBox(height: 50 + Spacing.height * 12),
+          ),
+          SliverList(
+            delegate: SliverChildBuilderDelegate(
+              (_, i) {
+                final cr = controller.computedRecords[i];
+
+                // difference from average consumption
+                final diff =
+                    controller.calculationService.calculateDiff(cr.dailyUsage);
+                final color =
+                    controller.calculationService.calculateColor(cr.dailyUsage);
+
+                String status = '-';
+                IconData icon = Icons.remove_rounded;
+
+                if (diff.abs().toPrecision(2) >= 0 &&
+                    diff.abs().toPrecision(2) < 0.1) {
+                  status = 'Penggunaan wajar';
+                } else if (diff < 0) {
+                  status = 'Penggunaan lebih tinggi daripada biasanya';
+                  icon = Icons.arrow_upward_rounded;
+                } else {
+                  status = 'Penggunaan lebih rendah daripada biasanya';
+                  icon = Icons.arrow_downward_rounded;
+                }
+
+                return Column(
+                  children: [
+                    ListTile(
+                      isThreeLine: true,
+                      leading: CircleAvatar(
+                        backgroundColor: Get.theme.colorScheme.primary,
+                        child: Icon(
+                          icon,
+                          color: color,
+                        ),
+                      ),
+                      title: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          RichText(
+                            text: TextSpan(
+                              text: cr.dailyUsage.toStringAsFixed(2),
+                              style: TextStyle(
+                                color: Get.theme.colorScheme.onBackground,
+                                fontSize: 20,
+                              ),
+                              children: [
+                                TextSpan(
+                                  text: ' kW H',
+                                  style: TextStyle(
+                                    color: Get.theme.colorScheme.onBackground,
+                                    fontSize: 8,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Text(
+                            Helper.df.format(cr.record.createdAt),
+                            style: TextStyle(
+                              color: Get.theme.colorScheme.onBackground,
+                              fontSize: 12,
+                            ),
+                          )
+                        ],
+                      ),
+                      subtitle: Text(
+                          '$status\n${cr.record.note != null ? cr.record.note! : '-'}',
+                          style: const TextStyle(
+                            fontSize: 12,
+                          )),
+                    ),
+                    const Divider(height: Spacing.height * 12),
+                  ],
+                );
+              },
+              childCount: controller.computedRecords.length,
+            ),
+          ),
+        ],
+      ),
+      // bodyx: SingleChildScrollView(
+      //   child: Column(
+      //     children: [
+      //       Container(
+      //         color: Get.theme.colorScheme.primary,
+      //         padding: const EdgeInsets.only(
+      //           left: Spacing.padding * 8,
+      //           right: Spacing.padding * 8,
+      //           top: Spacing.padding * 4,
+      //           bottom: Spacing.padding,
+      //         ),
+      //         child: AverageUsage(usage: controller.averageConsumption.value),
+      //       ),
+      //       _buildChart(),
+      //       _buildRangeSelector(),
+      //       Stack(
+      //         clipBehavior: Clip.none,
+      //         children: [
+      //           Container(
+      //             color: Get.theme.colorScheme.primary,
+      //             width: double.infinity,
+      //             height: 50,
+      //           ),
+      //           Positioned(
+      //             left: Spacing.width * 8,
+      //             right: Spacing.width * 8,
+      //             child: Container(
+      //               height: 100,
+      //               decoration: BoxDecoration(
+      //                 color: Get.theme.colorScheme.surface,
+      //                 borderRadius: Spacing.rounded,
+      //                 boxShadow: [
+      //                   BoxShadow(
+      //                     color: Get.theme.colorScheme.shadow,
+      //                     blurRadius: 10,
+      //                     offset: const Offset(0, 10),
+      //                   ),
+      //                 ],
+      //               ),
+      //             ),
+      //           )
+      //         ],
+      //       ),
+      //       ListView.separated(
+      //         physics: const NeverScrollableScrollPhysics(),
+      //         shrinkWrap: true,
+      //         itemCount: controller.computedRecords.length,
+      //         padding: const EdgeInsets.only(top: 50 + Spacing.padding * 8),
+      //         separatorBuilder: (_, __) => const Divider(
+      //           height: Spacing.height * 12,
+      //         ),
+      //         itemBuilder: (_, i) {
+      //           final cr = controller.computedRecords[i];
+
+      //           print(i);
+
+      //           return ListTile(
+      //             leading: CircleAvatar(
+      //               backgroundColor: Get.theme.colorScheme.primary,
+      //               radius: 34,
+      //               child: RichText(
+      //                 text: TextSpan(
+      //                   text: cr.dailyUsage.toStringAsFixed(2),
+      //                   style: TextStyle(
+      //                     color: Get.theme.colorScheme.onPrimary,
+      //                     fontSize: 16,
+      //                   ),
+      //                   children: [
+      //                     TextSpan(
+      //                       text: ' kW H',
+      //                       style: TextStyle(
+      //                         color: Get.theme.colorScheme.onPrimary,
+      //                         fontSize: 6,
+      //                       ),
+      //                     ),
+      //                   ],
+      //                 ),
+      //               ),
+      //             ),
+      //             title: Text(cr.record.createdAt.toString()),
+      //             subtitle:
+      //                 cr.record.note != null ? Text(cr.record.note!) : null,
+      //           );
+      //         },
+      //       )
+      //     ],
+      //   ),
+      // ),
+    );
+  }
+
+  Obx _buildChart() {
+    return Obx(() {
+      final range = controller.chartRage.value;
+
+      return Container(
+        height: 180,
+        color: Get.theme.colorScheme.primary,
+        child: SfCartesianChart(
+          key: ValueKey(range),
+          series: <LineSeries<ComputedRecord, DateTime>>[
+            LineSeries(
+              dataSource: controller.displayedData,
+              onRendererCreated: (chartController) {
+                controller.chartController = chartController;
+              },
+              yValueMapper: (ComputedRecord cp, _) => cp.dailyUsage,
+              xValueMapper: (ComputedRecord cp, _) => cp.record.createdAt,
+              xAxisName: 'Date',
+              color: Get.theme.colorScheme.onPrimary.withOpacity(0.75),
+              width: 2,
+              dataLabelSettings: DataLabelSettings(
+                isVisible: range == ChartRange.week || range == ChartRange.month
+                    ? true
+                    : false,
+                textStyle: TextStyle(
+                  color: Get.theme.colorScheme.onPrimary,
+                  fontSize: 12,
+                ),
+                connectorLineSettings: ConnectorLineSettings(
+                  color: Get.theme.colorScheme.onPrimary,
+                  width: 1,
+                ),
               ),
-              ElevatedButton(
-                  onPressed: () {
-                    Get.toNamed('/add-record');
-                  },
-                  child: const Text('navigate')),
+            ),
+          ],
+          primaryXAxis: DateTimeAxis(
+            majorGridLines: const MajorGridLines(width: 0),
+            isVisible: false,
+          ),
+          primaryYAxis: NumericAxis(
+            isVisible: false,
+          ),
+          borderWidth: 0,
+          plotAreaBorderWidth: 0,
+          backgroundColor: Colors.transparent,
+          margin: EdgeInsets.zero,
+          trackballBehavior: TrackballBehavior(
+            enable: true,
+            activationMode: ActivationMode.singleTap,
+            tooltipSettings:
+                const InteractiveTooltip(format: 'point.x : point.y'),
+          ),
+        ),
+      );
+    });
+  }
+
+  Container _buildRangeSelector() {
+    return Container(
+      color: Get.theme.colorScheme.primary,
+      padding: Spacing.p8,
+      child: Obx(() {
+        final chartRange = controller.chartRage.value;
+
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            ElevatedButton(
+              onPressed: () {
+                controller.setRage(ChartRange.week);
+              },
+              style: ElevatedButton.styleFrom(
+                elevation: 0,
+                primary: chartRange == ChartRange.week
+                    ? Get.theme.colorScheme.onPrimary
+                    : Colors.transparent,
+                onPrimary: chartRange == ChartRange.week
+                    ? Get.theme.colorScheme.primary
+                    : Get.theme.colorScheme.onPrimary,
+              ),
+              child: const Text('1M'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                controller.setRage(ChartRange.month);
+              },
+              style: ElevatedButton.styleFrom(
+                  elevation: 0,
+                  primary: chartRange == ChartRange.month
+                      ? Get.theme.colorScheme.onPrimary
+                      : Colors.transparent,
+                  onPrimary: chartRange == ChartRange.month
+                      ? Get.theme.colorScheme.primary
+                      : Get.theme.colorScheme.onPrimary),
+              child: const Text('1B'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                controller.setRage(ChartRange.year);
+              },
+              style: ElevatedButton.styleFrom(
+                  elevation: 0,
+                  primary: chartRange == ChartRange.year
+                      ? Get.theme.colorScheme.onPrimary
+                      : Colors.transparent,
+                  onPrimary: chartRange == ChartRange.year
+                      ? Get.theme.colorScheme.primary
+                      : Get.theme.colorScheme.onPrimary),
+              child: const Text('1T'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                controller.setRage(ChartRange.all);
+              },
+              style: ElevatedButton.styleFrom(
+                  elevation: 0,
+                  primary: chartRange == ChartRange.all
+                      ? Get.theme.colorScheme.onPrimary
+                      : Colors.transparent,
+                  onPrimary: chartRange == ChartRange.all
+                      ? Get.theme.colorScheme.primary
+                      : Get.theme.colorScheme.onPrimary),
+              child: const Text('Semua'),
+            ),
+          ],
+        );
+      }),
+    );
+  }
+}
+
+class AverageUsage extends StatelessWidget {
+  final double usage;
+
+  const AverageUsage({
+    Key? key,
+    required this.usage,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        CircleAvatar(
+          backgroundColor: Get.theme.colorScheme.secondary,
+          child: Icon(
+            Icons.electric_meter_outlined,
+            color: Get.theme.colorScheme.onSecondary,
+          ),
+        ),
+        Spacing.w8,
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Penggunaan harian'.tr,
+                style: TextStyle(
+                  color: Get.theme.colorScheme.onPrimary,
+                  fontSize: 12,
+                ),
+              ),
+              Spacing.h1,
+              // display 3.2 kwh (kwh in small font)
+              RichText(
+                text: TextSpan(
+                  text: usage.toStringAsFixed(2),
+                  style: TextStyle(
+                    color: Get.theme.colorScheme.onPrimary,
+                    fontSize: 20,
+                  ),
+                  children: [
+                    TextSpan(
+                      text: ' kW H',
+                      style: TextStyle(
+                        color: Get.theme.colorScheme.onPrimary,
+                        fontSize: 10,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ],
           ),
         ),
-      ),
+      ],
     );
   }
 }

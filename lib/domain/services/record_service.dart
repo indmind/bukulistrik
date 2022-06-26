@@ -44,20 +44,19 @@ class RecordService extends GetxService {
       createdAt: DateTime.parse('2022-06-10 19:33:12'),
       availableKwh: 52.63,
     ),
-    Record(
-      createdAt: DateTime.parse('2022-06-11 20:17:02'),
-      availableKwh: 60.5,
-      addedKwh: 10,
-      addedKwhPrice: 14870,
-    ),
+    // Record(
+    //   createdAt: DateTime.parse('2022-06-11 20:17:02'),
+    //   availableKwh: 60.5,
+    //   addedKwh: 10,
+    //   addedKwhPrice: 14870,
+    // ),
 
     // for performance benchmarking
-    // for (int i = 0; i < 10000; i++)
+    // for (int i = 0; i < 100; i++)
     //   Record(
-    //     createdAt: DateTime.parse('2022-06-11 20:17:02'),
+    //     createdAt:
+    //         DateTime.parse('2022-06-11 20:17:02').add(Duration(days: i + 1)),
     //     availableKwh: 60.5,
-    //     addedKwh: 10,
-    //     addedKwhPrice: 14870,
     //   )
   ];
 
