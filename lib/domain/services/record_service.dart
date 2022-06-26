@@ -52,7 +52,7 @@ class RecordService extends GetxService {
     ),
 
     // for performance benchmarking
-    // for (int i = 0; i < 100000; i++)
+    // for (int i = 0; i < 10000; i++)
     //   Record(
     //     createdAt: DateTime.parse('2022-06-11 20:17:02'),
     //     availableKwh: 60.5,

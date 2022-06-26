@@ -29,4 +29,15 @@ class MemoizationService extends GetxService {
 
     return _memoization[record]![key];
   }
+
+  /// This method is used to clear record memoization data
+  /// [record] is the record that is used for calculation
+  void remove(Record record) {
+    _memoization.remove(record);
+  }
+
+  /// This method is used to clear the entire memoization data
+  void clear() {
+    _memoization.clear();
+  }
 }

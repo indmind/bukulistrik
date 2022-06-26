@@ -1,7 +1,5 @@
 import 'package:bukulistrik/domain/models/computed_record.dart';
 import 'package:bukulistrik/domain/services/calculation_service.dart';
-import 'package:bukulistrik/domain/services/memoization_service.dart';
-import 'package:bukulistrik/domain/services/record_service.dart';
 import 'package:get/get.dart';
 
 class HomePageController extends GetxController {
@@ -9,7 +7,7 @@ class HomePageController extends GetxController {
 
   RxString averageConsumption = '0'.obs;
   RxString calculationTime = ''.obs;
-  final List<ComputedRecord> computedRecords = [];
+  RxList<ComputedRecord> computedRecords = <ComputedRecord>[].obs;
 
   @override
   void onInit() {
@@ -24,33 +22,11 @@ class HomePageController extends GetxController {
     averageConsumption.value =
         _calculationService.averageConsumption.toString();
 
-    final records = Get.find<RecordService>().records;
-    final memoization = Get.find<MemoizationService>();
-
-    computedRecords.clear();
-
-    for (int i = 0; i < records.length; i++) {
-      if (i == 0) {
-        computedRecords.add(ComputedRecord(
-          record: records[i],
-          memoizationService: memoization,
-        ));
-      } else {
-        computedRecords.add(ComputedRecord(
-          record: records[i],
-          prevRecord: computedRecords.last,
-          memoizationService: memoization,
-        ));
-      }
-
-      // OPTIMIZATION: eager load memoization
-      computedRecords.last.initialize();
-    }
+    computedRecords.value =
+        _calculationService.computedRecords.reversed.toList();
 
     stopwatch.stop();
 
     calculationTime.value = 'Time elapsed: ${stopwatch.elapsed}';
   }
-
-  // void on
 }
