@@ -1,5 +1,6 @@
 import 'package:bukulistrik/domain/models/computed_record.dart';
 import 'package:bukulistrik/ui/pages/home_page/home_page_controller.dart';
+import 'package:bukulistrik/ui/pages/home_page/widgets/available_kwh.dart';
 import 'package:bukulistrik/ui/theme/helper.dart';
 import 'package:bukulistrik/ui/theme/spacing.dart';
 import 'package:flutter/material.dart';
@@ -200,7 +201,6 @@ class HomePageView extends GetView<HomePageController> {
                 return Column(
                   children: [
                     ListTile(
-                      isThreeLine: true,
                       leading: CircleAvatar(
                         backgroundColor: color,
                         child: Container(
@@ -246,11 +246,26 @@ class HomePageView extends GetView<HomePageController> {
                           )
                         ],
                       ),
-                      subtitle: Text(
-                          '$status\n${cr.record.note != null ? cr.record.note! : '-'}',
-                          style: const TextStyle(
-                            fontSize: 12,
-                          )),
+                      subtitle: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Spacing.h2,
+                          if (cr.record.note != null)
+                            Text(
+                              "*${cr.record.note!}",
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: Get.theme.colorScheme.onBackground
+                                    .withOpacity(0.75),
+                              ),
+                            ),
+                          Text(
+                            status,
+                            style: const TextStyle(fontSize: 12),
+                          ),
+                        ],
+                      ),
                     ),
                     const Divider(height: Spacing.height * 12),
                   ],
@@ -261,94 +276,6 @@ class HomePageView extends GetView<HomePageController> {
           ),
         ],
       ),
-      // bodyx: SingleChildScrollView(
-      //   child: Column(
-      //     children: [
-      //       Container(
-      //         color: Get.theme.colorScheme.primary,
-      //         padding: const EdgeInsets.only(
-      //           left: Spacing.padding * 8,
-      //           right: Spacing.padding * 8,
-      //           top: Spacing.padding * 4,
-      //           bottom: Spacing.padding,
-      //         ),
-      //         child: AverageUsage(usage: controller.averageConsumption.value),
-      //       ),
-      //       _buildChart(),
-      //       _buildRangeSelector(),
-      //       Stack(
-      //         clipBehavior: Clip.none,
-      //         children: [
-      //           Container(
-      //             color: Get.theme.colorScheme.primary,
-      //             width: double.infinity,
-      //             height: 50,
-      //           ),
-      //           Positioned(
-      //             left: Spacing.width * 8,
-      //             right: Spacing.width * 8,
-      //             child: Container(
-      //               height: 100,
-      //               decoration: BoxDecoration(
-      //                 color: Get.theme.colorScheme.surface,
-      //                 borderRadius: Spacing.rounded,
-      //                 boxShadow: [
-      //                   BoxShadow(
-      //                     color: Get.theme.colorScheme.shadow,
-      //                     blurRadius: 10,
-      //                     offset: const Offset(0, 10),
-      //                   ),
-      //                 ],
-      //               ),
-      //             ),
-      //           )
-      //         ],
-      //       ),
-      //       ListView.separated(
-      //         physics: const NeverScrollableScrollPhysics(),
-      //         shrinkWrap: true,
-      //         itemCount: controller.computedRecords.length,
-      //         padding: const EdgeInsets.only(top: 50 + Spacing.padding * 8),
-      //         separatorBuilder: (_, __) => const Divider(
-      //           height: Spacing.height * 12,
-      //         ),
-      //         itemBuilder: (_, i) {
-      //           final cr = controller.computedRecords[i];
-
-      //           print(i);
-
-      //           return ListTile(
-      //             leading: CircleAvatar(
-      //               backgroundColor: Get.theme.colorScheme.primary,
-      //               radius: 34,
-      //               child: RichText(
-      //                 text: TextSpan(
-      //                   text: cr.dailyUsage.toStringAsFixed(2),
-      //                   style: TextStyle(
-      //                     color: Get.theme.colorScheme.onPrimary,
-      //                     fontSize: 16,
-      //                   ),
-      //                   children: [
-      //                     TextSpan(
-      //                       text: ' kW H',
-      //                       style: TextStyle(
-      //                         color: Get.theme.colorScheme.onPrimary,
-      //                         fontSize: 6,
-      //                       ),
-      //                     ),
-      //                   ],
-      //                 ),
-      //               ),
-      //             ),
-      //             title: Text(cr.record.createdAt.toString()),
-      //             subtitle:
-      //                 cr.record.note != null ? Text(cr.record.note!) : null,
-      //           );
-      //         },
-      //       )
-      //     ],
-      //   ),
-      // ),
     );
   }
 
@@ -479,65 +406,6 @@ class HomePageView extends GetView<HomePageController> {
           ],
         );
       }),
-    );
-  }
-}
-
-class AvailableKwh extends StatelessWidget {
-  final double usage;
-
-  const AvailableKwh({
-    Key? key,
-    required this.usage,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        CircleAvatar(
-          backgroundColor: Get.theme.colorScheme.secondary,
-          child: Icon(
-            Icons.electric_meter_outlined,
-            color: Get.theme.colorScheme.onSecondary,
-          ),
-        ),
-        Spacing.w8,
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Jumlah kW H Terakhir'.tr,
-                style: TextStyle(
-                  color: Get.theme.colorScheme.onPrimary,
-                  fontSize: 12,
-                ),
-              ),
-              Spacing.h1,
-              // display 3.2 kwh (kwh in small font)
-              RichText(
-                text: TextSpan(
-                  text: usage.toStringAsFixed(2),
-                  style: TextStyle(
-                    color: Get.theme.colorScheme.onPrimary,
-                    fontSize: 20,
-                  ),
-                  children: [
-                    TextSpan(
-                      text: ' kW H',
-                      style: TextStyle(
-                        color: Get.theme.colorScheme.onPrimary,
-                        fontSize: 10,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
     );
   }
 }
