@@ -93,8 +93,7 @@ class HomePageView extends GetView<HomePageController> {
                                 controller.lifetimeAverageConsumption.value -
                                     controller.displayedAverageConsumption;
 
-                            if (diff.abs().toPrecision(2) >= 0 &&
-                                diff.abs().toPrecision(2) < 0.1) {
+                            if (diff.abs().toPrecision(2) < 0.1) {
                               color = Get.theme.colorScheme.secondary;
                             } else if (diff > 0) {
                               color = Get.theme.colorScheme.tertiary
@@ -197,8 +196,7 @@ class HomePageView extends GetView<HomePageController> {
                   String status = '-';
                   IconData icon = Icons.circle_rounded;
 
-                  if (diff.abs().toPrecision(2) >= 0 &&
-                      diff.abs().toPrecision(2) < 0.1) {
+                  if (diff.abs().toPrecision(2) < 0.1) {
                     status = 'Penggunaan wajar';
                   } else if (diff < 0) {
                     status = 'Penggunaan lebih tinggi daripada biasanya';
