@@ -32,21 +32,20 @@ class CalculationService extends GetxService {
     for (int i = 0; i < records.length; i++) {
       // copy each record to computedRecord
       _copyToComputedRecord(records[i], memoization, i == 0);
-
-      // calculate usage
-      if (i != 0) {
-        final recordBefore = records[i - 1];
-        final consumption = recordBefore.availableKwh - records[i].availableKwh;
-
-        totalConsumption += consumption;
-        minConsumption =
-            consumption < minConsumption ? consumption : minConsumption;
-        maxConsumption =
-            consumption > maxConsumption ? consumption : maxConsumption;
-      }
     }
 
-    averageConsumption = totalConsumption / (records.length - 1);
+    totalConsumption = computedRecords.fold<double>(0, (value, element) {
+      final consumption = element.dailyUsage;
+
+      minConsumption =
+          consumption < minConsumption ? consumption : minConsumption;
+      maxConsumption =
+          consumption > maxConsumption ? consumption : maxConsumption;
+
+      return value + consumption;
+    });
+
+    averageConsumption = totalConsumption / computedRecords.length;
   }
 
   void _copyToComputedRecord(Record record, MemoizationService memoization,
