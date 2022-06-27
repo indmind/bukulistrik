@@ -264,6 +264,61 @@ class HomePageView extends GetView<HomePageController> {
                             status,
                             style: const TextStyle(fontSize: 12),
                           ),
+                          if (cr.record.addedPricePerKwh != null)
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Spacing.h4,
+                                Text(
+                                  "Pembelian".tr,
+                                  style: Get.theme.textTheme.titleSmall,
+                                ),
+                                Spacing.h2,
+                                Row(
+                                  children: [
+                                    Icon(
+                                      Icons.add_rounded,
+                                      color: Get.theme.colorScheme.tertiary,
+                                      size: 18,
+                                    ),
+                                    Kwh(value: cr.record.addedKwh!, size: 18),
+                                    const Spacer(),
+                                    Container(
+                                      height: 16,
+                                      width: 1,
+                                      color: Get.theme.colorScheme.onBackground
+                                          .withOpacity(0.5),
+                                    ),
+                                    const Spacer(),
+                                    RichText(
+                                      text: TextSpan(
+                                        text: "Rp. ",
+                                        style: TextStyle(
+                                          color: Get
+                                              .theme.colorScheme.onBackground
+                                              .withOpacity(0.75),
+                                          fontSize: 12,
+                                        ),
+                                        children: [
+                                          TextSpan(
+                                            text: cr.record.addedKwhPrice!
+                                                .toString(),
+                                            style: Get.theme.textTheme.caption!
+                                                .copyWith(
+                                              fontSize: 18,
+                                              color: Get.theme.colorScheme
+                                                  .onBackground
+                                                  .withOpacity(0.75),
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              ],
+                            ),
                         ],
                       ),
                     ),
@@ -406,6 +461,41 @@ class HomePageView extends GetView<HomePageController> {
           ],
         );
       }),
+    );
+  }
+}
+
+class Kwh extends StatelessWidget {
+  final double value;
+  final double size;
+  final TextStyle? style;
+
+  const Kwh({
+    Key? key,
+    required this.value,
+    this.size = 16,
+    this.style,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return RichText(
+      text: TextSpan(
+        text: value.toStringAsFixed(2),
+        style: (style ?? const TextStyle()).copyWith(
+          color: Get.theme.colorScheme.onBackground.withOpacity(0.75),
+          fontSize: size,
+          fontWeight: FontWeight.bold,
+        ),
+        children: [
+          TextSpan(
+            text: ' kW H',
+            style: Get.theme.textTheme.caption!.copyWith(
+              fontSize: size * 0.4,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
