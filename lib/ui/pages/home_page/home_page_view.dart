@@ -201,10 +201,10 @@ class HomePageView extends GetView<HomePageController> {
                     status = 'Penggunaan wajar';
                   } else if (diff < 0) {
                     status = 'Penggunaan lebih tinggi daripada biasanya';
-                    icon = Icons.arrow_upward_rounded;
+                    icon = Icons.arrow_drop_up_rounded;
                   } else {
                     status = 'Penggunaan lebih rendah daripada biasanya';
-                    icon = Icons.arrow_downward_rounded;
+                    icon = Icons.arrow_drop_down_rounded;
                   }
 
                   return Column(
