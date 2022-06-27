@@ -10,6 +10,7 @@ final kColorScheme = const ColorScheme.light().copyWith(
   shadow: Colors.black.withOpacity(0.05),
   tertiary: const Color.fromARGB(255, 2, 169, 8),
   error: const Color.fromARGB(255, 227, 15, 0),
+  onBackground: const Color.fromARGB(255, 35, 35, 35),
 );
 
 final kAppTheme = ThemeData.light().copyWith(

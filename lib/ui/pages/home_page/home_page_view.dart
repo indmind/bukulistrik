@@ -107,26 +107,9 @@ class HomePageView extends GetView<HomePageController> {
                             children: [
                               Icon(icon, color: color, size: 20),
                               Spacing.w4,
-                              RichText(
-                                text: TextSpan(
-                                  text: controller.displayedAverageConsumption
-                                      .toStringAsFixed(2),
-                                  style: TextStyle(
-                                    color: Get.theme.colorScheme.onBackground
-                                        .withOpacity(0.75),
-                                    fontSize: 32,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                  children: [
-                                    TextSpan(
-                                      text: ' kW H',
-                                      style:
-                                          Get.theme.textTheme.caption!.copyWith(
-                                        fontSize: 10,
-                                      ),
-                                    ),
-                                  ],
-                                ),
+                              Kwh(
+                                value: controller.displayedAverageConsumption,
+                                size: 32,
                               ),
                             ],
                           );
@@ -533,7 +516,7 @@ class Kwh extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final mergedStyle = TextStyle(
-      color: Get.theme.colorScheme.onBackground.withOpacity(0.75),
+      color: Get.theme.colorScheme.onBackground.withOpacity(0.9),
       fontSize: size,
       fontWeight: FontWeight.bold,
     ).merge(style);
@@ -547,7 +530,7 @@ class Kwh extends StatelessWidget {
             text: ' kW H',
             style: Get.theme.textTheme.caption!.copyWith(
               fontSize: size * 0.4,
-              color: mergedStyle.color?.withOpacity(0.8),
+              color: mergedStyle.color?.withOpacity(0.75),
             ),
           ),
         ],
