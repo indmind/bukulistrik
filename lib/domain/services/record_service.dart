@@ -58,12 +58,12 @@ class RecordService extends GetxService {
     // ),
 
     // for performance benchmarking
-    for (int i = 0; i < 100; i++)
-      Record(
-        createdAt:
-            DateTime.parse('2022-06-12 20:17:02').add(Duration(days: i + 1)),
-        availableKwh: (100 - i).clamp(0, 100).toDouble(),
-      )
+    // for (int i = 0; i < 100; i++)
+    //   Record(
+    //     createdAt:
+    //         DateTime.parse('2022-06-12 20:17:02').add(Duration(days: i + 1)),
+    //     availableKwh: (100 - i).clamp(0, 100).toDouble(),
+    //   )
   ];
 
   List<Record> getCurrentRecords() {

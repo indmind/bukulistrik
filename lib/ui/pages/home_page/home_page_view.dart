@@ -39,11 +39,9 @@ class HomePageView extends GetView<HomePageController> {
                 bottom: Spacing.padding,
               ),
               child: AvailableKwh(
-                available:
-                    controller.lastComputedRecord.value?.record.availableKwh ??
-                        0,
-                inPrice:
-                    controller.lastComputedRecord.value?.costOfAvailableKwh,
+                available: controller.availableKwh,
+                inPrice: controller.availableKwhValue,
+                predictedDayLeft: controller.dayLeftPrediction,
               ),
             ),
           ),

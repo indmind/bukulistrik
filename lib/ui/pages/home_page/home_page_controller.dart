@@ -69,12 +69,81 @@ class HomePageController extends GetxController {
   }
 
   double get displayedAverageConsumption {
-    if (displayedData.isEmpty) return 0;
+    switch (chartRage.value) {
+      case ChartRange.week:
+        return weeklyAverageConsumption;
+      case ChartRange.month:
+        return monthlyAverageConsumption;
+      case ChartRange.year:
+        return yearlyAverageConsumption;
+      case ChartRange.all:
+        return lifetimeAverageConsumption.value;
+    }
+  }
 
-    final sum = displayedData.fold<double>(
-        0, (value, element) => value + element.dailyUsage);
+  double get weeklyAverageConsumption {
+    if (weeklyUsage.isEmpty) return 0;
 
-    return sum / displayedData.length;
+    final sum = weeklyUsage.fold<double>(
+      0,
+      (value, element) => value + element.dailyUsage,
+    );
+
+    return sum / weeklyUsage.length;
+  }
+
+  double get monthlyAverageConsumption {
+    if (monthlyUsage.isEmpty) return 0;
+
+    final sum = monthlyUsage.fold<double>(
+      0,
+      (value, element) => value + element.dailyUsage,
+    );
+
+    return sum / monthlyUsage.length;
+  }
+
+  double get yearlyAverageConsumption {
+    if (yearlyUsage.isEmpty) return 0;
+
+    final sum = yearlyUsage.fold<double>(
+      0,
+      (value, element) => value + element.dailyUsage,
+    );
+
+    return sum / yearlyUsage.length;
+  }
+
+  double get availableKwh {
+    return lastComputedRecord.value?.record.availableKwh ?? 0;
+  }
+
+  double? get availableKwhValue {
+    return lastComputedRecord.value?.costOfAvailableKwh;
+  }
+
+  int? get dayLeftPrediction {
+    double benchmark = weeklyAverageConsumption;
+
+    if (benchmark == 0) {
+      benchmark = monthlyAverageConsumption;
+    }
+
+    if (benchmark == 0) {
+      benchmark = yearlyAverageConsumption;
+    }
+
+    if (benchmark == 0) {
+      benchmark = lifetimeAverageConsumption.value;
+    }
+
+    if (benchmark == 0) {
+      return -1;
+    }
+
+    return lastComputedRecord.value?.record.availableKwh != null
+        ? lastComputedRecord.value!.record.availableKwh ~/ benchmark
+        : null;
   }
 
   void calculate() async {

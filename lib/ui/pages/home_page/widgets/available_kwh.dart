@@ -7,11 +7,13 @@ import 'package:get/get.dart';
 class AvailableKwh extends StatelessWidget {
   final double available;
   final double? inPrice;
+  final int? predictedDayLeft;
 
   const AvailableKwh({
     Key? key,
     required this.available,
     this.inPrice,
+    this.predictedDayLeft,
   }) : super(key: key);
 
   @override
@@ -31,7 +33,7 @@ class AvailableKwh extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Jumlah kW H Terakhir'.tr,
+                'Jumlah kW H'.tr,
                 style: TextStyle(
                   color: Get.theme.colorScheme.onPrimary,
                   fontSize: 12,
@@ -73,6 +75,27 @@ class AvailableKwh extends StatelessWidget {
             ],
           ),
         ),
+        // if (predictedDuration != null) const Spacer(),
+        if (predictedDayLeft != null)
+          RichText(
+            text: TextSpan(
+              text: predictedDayLeft!.toStringAsFixed(0),
+              style: TextStyle(
+                color: Get.theme.colorScheme.onPrimary,
+                fontSize: 32,
+                fontWeight: FontWeight.bold,
+              ),
+              children: [
+                TextSpan(
+                  text: ' Hari',
+                  style: Get.theme.textTheme.caption!.copyWith(
+                    fontSize: 32 * 0.4,
+                    color: Get.theme.colorScheme.onPrimary.withOpacity(0.75),
+                  ),
+                ),
+              ],
+            ),
+          ),
       ],
     );
   }
