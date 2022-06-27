@@ -56,7 +56,7 @@ class RecordService extends GetxService {
     //   Record(
     //     createdAt:
     //         DateTime.parse('2022-06-11 20:17:02').add(Duration(days: i + 1)),
-    //     availableKwh: 60.5,
+    //     availableKwh: 50,
     //   )
   ];
 

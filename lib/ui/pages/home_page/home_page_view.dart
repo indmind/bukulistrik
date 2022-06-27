@@ -101,7 +101,7 @@ class HomePageView extends GetView<HomePageController> {
                           } else {
                             color =
                                 Get.theme.colorScheme.error.withOpacity(0.8);
-                            icon = Icons.swipe_up_alt_outlined;
+                            icon = Icons.swipe_up_alt_rounded;
                           }
 
                           return Row(
