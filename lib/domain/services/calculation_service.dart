@@ -23,7 +23,8 @@ class CalculationService extends GetxService {
 
     double totalConsumption = 0.0;
 
-    for (int i = 0; i < records.length; i++) {}
+    // IMPORTANT: order by date
+    records.sort((a, b) => a.createdAt.compareTo(b.createdAt));
 
     computedRecords.clear();
 
