@@ -138,6 +138,7 @@ class HomePageView extends GetView<HomePageController> {
                           Spacing.h4,
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
                               const Icon(Icons.data_usage_rounded, size: 14),
                               Spacing.w2,
