@@ -1,5 +1,6 @@
 import 'package:bukulistrik/domain/models/computed_record.dart';
 import 'package:bukulistrik/domain/services/calculation_service.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
@@ -8,6 +9,10 @@ enum ChartRange { week, month, year, all }
 class HomePageController extends GetxController {
   final CalculationService calculationService = Get.find<CalculationService>();
 
+  late final ScrollController scrollController;
+  ChartSeriesController? chartController;
+
+  RxBool showBackToTopButton = false.obs;
   RxDouble lifetimeAverageConsumption = 0.0.obs;
   Rx<ComputedRecord?> lastComputedRecord = Rx(null);
   RxString calculationTime = ''.obs;
@@ -15,12 +20,32 @@ class HomePageController extends GetxController {
 
   Rx<ChartRange> chartRage = ChartRange.week.obs;
 
-  ChartSeriesController? chartController;
-
   List<ComputedRecord> weeklyUsage = [];
   List<ComputedRecord> monthlyUsage = [];
   List<ComputedRecord> yearlyUsage = [];
   List<ComputedRecord> allUsage = [];
+
+  @override
+  void onInit() {
+    super.onInit();
+    calculate();
+    scrollController = ScrollController()
+      ..addListener(() {
+        if (scrollController.offset >= 400) {
+          showBackToTopButton.value = true;
+        } else {
+          showBackToTopButton.value = false;
+        }
+      });
+  }
+
+  void scrollToTop() {
+    scrollController.animateTo(
+      0,
+      duration: 500.milliseconds,
+      curve: Curves.linear,
+    );
+  }
 
   List<ComputedRecord> get displayedData {
     late final List<ComputedRecord> dataSource;
@@ -50,12 +75,6 @@ class HomePageController extends GetxController {
         0, (value, element) => value + element.dailyUsage);
 
     return sum / displayedData.length;
-  }
-
-  @override
-  void onInit() {
-    super.onInit();
-    calculate();
   }
 
   void calculate() async {

@@ -12,338 +12,353 @@ class HomePageView extends GetView<HomePageController> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: CustomScrollView(
-        slivers: [
-          SliverAppBar(
-            // elevation: 0,
-            pinned: true,
-            centerTitle: true,
-            title: Text(
-              'Buku Listrik',
-              style: TextStyle(
-                color: Get.theme.colorScheme.onPrimary,
-                fontSize: 18,
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ),
-          SliverToBoxAdapter(
-            child: Container(
-              color: Get.theme.colorScheme.primary,
-              padding: const EdgeInsets.only(
-                left: Spacing.padding * 8,
-                right: Spacing.padding * 8,
-                top: Spacing.padding * 4,
-                bottom: Spacing.padding,
-              ),
-              child: AvailableKwh(
-                available:
-                    controller.lastComputedRecord.value?.record.availableKwh ??
-                        0,
-                inPrice:
-                    controller.lastComputedRecord.value?.costOfAvailableKwh,
-              ),
-            ),
-          ),
-          SliverToBoxAdapter(
-            child: _buildChart(),
-          ),
-          SliverToBoxAdapter(
-            child: _buildRangeSelector(),
-          ),
-          SliverToBoxAdapter(
-            child: Stack(
-              clipBehavior: Clip.none,
-              children: [
-                Container(
-                  color: Get.theme.colorScheme.primary,
-                  width: double.infinity,
-                  height: 50,
+    return Obx(() {
+      return Scaffold(
+        body: CustomScrollView(
+          controller: controller.scrollController,
+          slivers: [
+            SliverAppBar(
+              // elevation: 0,
+              pinned: true,
+              centerTitle: true,
+              title: Text(
+                'Buku Listrik',
+                style: TextStyle(
+                  color: Get.theme.colorScheme.onPrimary,
+                  fontSize: 18,
                 ),
-                Positioned(
-                  left: Spacing.width * 8,
-                  right: Spacing.width * 8,
-                  child: Container(
-                    height: 100,
-                    decoration: BoxDecoration(
-                      color: Get.theme.colorScheme.surface,
-                      borderRadius: Spacing.rounded,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Get.theme.colorScheme.shadow,
-                          blurRadius: 10,
-                          offset: const Offset(0, 10),
-                        ),
-                      ],
-                    ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Obx(() {
-                          // listen to selectd range
-                          controller.chartRage.value;
+                textAlign: TextAlign.center,
+              ),
+            ),
+            SliverToBoxAdapter(
+              child: Container(
+                color: Get.theme.colorScheme.primary,
+                padding: const EdgeInsets.only(
+                  left: Spacing.padding * 8,
+                  right: Spacing.padding * 8,
+                  top: Spacing.padding * 4,
+                  bottom: Spacing.padding,
+                ),
+                child: AvailableKwh(
+                  available: controller
+                          .lastComputedRecord.value?.record.availableKwh ??
+                      0,
+                  inPrice:
+                      controller.lastComputedRecord.value?.costOfAvailableKwh,
+                ),
+              ),
+            ),
+            SliverToBoxAdapter(
+              child: _buildChart(),
+            ),
+            SliverToBoxAdapter(
+              child: _buildRangeSelector(),
+            ),
+            SliverToBoxAdapter(
+              child: Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  Container(
+                    color: Get.theme.colorScheme.primary,
+                    width: double.infinity,
+                    height: 50,
+                  ),
+                  Positioned(
+                    left: Spacing.width * 8,
+                    right: Spacing.width * 8,
+                    child: Container(
+                      height: 100,
+                      decoration: BoxDecoration(
+                        color: Get.theme.colorScheme.surface,
+                        borderRadius: Spacing.rounded,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Get.theme.colorScheme.shadow,
+                            blurRadius: 10,
+                            offset: const Offset(0, 10),
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Obx(() {
+                            // listen to selectd range
+                            controller.chartRage.value;
 
-                          Color color = Get.theme.colorScheme.background;
-                          IconData icon = Icons.circle_rounded;
+                            Color color = Get.theme.colorScheme.background;
+                            IconData icon = Icons.circle_rounded;
 
-                          double diff =
-                              controller.lifetimeAverageConsumption.value -
-                                  controller.displayedAverageConsumption;
+                            double diff =
+                                controller.lifetimeAverageConsumption.value -
+                                    controller.displayedAverageConsumption;
 
-                          if (diff.abs().toPrecision(2) >= 0 &&
-                              diff.abs().toPrecision(2) < 0.1) {
-                            color = Get.theme.colorScheme.secondary;
-                          } else if (diff > 0) {
-                            color =
-                                Get.theme.colorScheme.tertiary.withOpacity(0.8);
-                            icon = Icons.swipe_down_alt_rounded;
-                          } else {
-                            color =
-                                Get.theme.colorScheme.error.withOpacity(0.8);
-                            icon = Icons.swipe_up_alt_rounded;
-                          }
+                            if (diff.abs().toPrecision(2) >= 0 &&
+                                diff.abs().toPrecision(2) < 0.1) {
+                              color = Get.theme.colorScheme.secondary;
+                            } else if (diff > 0) {
+                              color = Get.theme.colorScheme.tertiary
+                                  .withOpacity(0.8);
+                              icon = Icons.swipe_down_alt_rounded;
+                            } else {
+                              color =
+                                  Get.theme.colorScheme.error.withOpacity(0.8);
+                              icon = Icons.swipe_up_alt_rounded;
+                            }
 
-                          return Row(
+                            return Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(icon, color: color, size: 20),
+                                Spacing.w4,
+                                RichText(
+                                  text: TextSpan(
+                                    text: controller.displayedAverageConsumption
+                                        .toStringAsFixed(2),
+                                    style: TextStyle(
+                                      color: Get.theme.colorScheme.onBackground
+                                          .withOpacity(0.75),
+                                      fontSize: 32,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                    children: [
+                                      TextSpan(
+                                        text: ' kW H',
+                                        style: Get.theme.textTheme.caption!
+                                            .copyWith(
+                                          fontSize: 10,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            );
+                          }),
+                          Spacing.h4,
+                          Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Icon(icon, color: color, size: 20),
-                              Spacing.w4,
+                              const Icon(Icons.data_usage_rounded, size: 14),
+                              Spacing.w2,
                               RichText(
                                 text: TextSpan(
-                                  text: controller.displayedAverageConsumption
+                                  text: controller.lifetimeAverageConsumption
                                       .toStringAsFixed(2),
                                   style: TextStyle(
-                                    color: Get.theme.colorScheme.onBackground
-                                        .withOpacity(0.75),
-                                    fontSize: 32,
+                                    color: Get.theme.colorScheme.primary,
                                     fontWeight: FontWeight.bold,
+                                    fontSize: 16,
                                   ),
                                   children: [
                                     TextSpan(
                                       text: ' kW H',
-                                      style:
-                                          Get.theme.textTheme.caption!.copyWith(
-                                        fontSize: 10,
+                                      style: TextStyle(
+                                        color:
+                                            Get.theme.colorScheme.onBackground,
+                                        fontWeight: FontWeight.normal,
+                                        fontSize: 8,
                                       ),
                                     ),
                                   ],
                                 ),
                               ),
+                              Spacing.w2,
+                              Text(
+                                'Sepanjang waktu',
+                                style: Get.theme.textTheme.caption!.copyWith(
+                                  fontSize: 10,
+                                ),
+                              ),
                             ],
-                          );
-                        }),
-                        Spacing.h4,
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            ),
+            const SliverToBoxAdapter(
+              child: SizedBox(height: 50 + Spacing.height * 12),
+            ),
+            SliverList(
+              delegate: SliverChildBuilderDelegate(
+                (_, i) {
+                  final cr = controller.computedRecords[i];
+
+                  // difference from average consumption
+                  final diff = controller.calculationService
+                      .calculateDiff(cr.dailyUsage);
+                  final color = controller.calculationService
+                      .calculateColor(cr.dailyUsage);
+
+                  String status = '-';
+                  IconData icon = Icons.circle_rounded;
+
+                  if (diff.abs().toPrecision(2) >= 0 &&
+                      diff.abs().toPrecision(2) < 0.1) {
+                    status = 'Penggunaan wajar';
+                  } else if (diff < 0) {
+                    status = 'Penggunaan lebih tinggi daripada biasanya';
+                    icon = Icons.arrow_upward_rounded;
+                  } else {
+                    status = 'Penggunaan lebih rendah daripada biasanya';
+                    icon = Icons.arrow_downward_rounded;
+                  }
+
+                  return Column(
+                    children: [
+                      ListTile(
+                        leading: CircleAvatar(
+                          backgroundColor: color,
+                          child: Container(
+                            padding: Spacing.p2,
+                            decoration: BoxDecoration(
+                              color: Get.theme.colorScheme.background,
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(
+                              icon,
+                              color: color,
+                            ),
+                          ),
+                        ),
+                        title: Row(
+                          crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
-                            const Icon(Icons.data_usage_rounded, size: 14),
+                            Kwh(value: cr.dailyUsage, size: 20),
                             Spacing.w2,
                             RichText(
                               text: TextSpan(
-                                text: controller.lifetimeAverageConsumption
-                                    .toStringAsFixed(2),
+                                text: "/ Rp. ",
                                 style: TextStyle(
-                                  color: Get.theme.colorScheme.primary,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16,
+                                  color: Get.theme.colorScheme.onBackground
+                                      .withOpacity(0.75),
+                                  fontSize: 9,
                                 ),
                                 children: [
                                   TextSpan(
-                                    text: ' kW H',
-                                    style: TextStyle(
-                                      color: Get.theme.colorScheme.onBackground,
-                                      fontWeight: FontWeight.normal,
-                                      fontSize: 8,
+                                    text: Helper.rp.format(cr.dailyCost),
+                                    style:
+                                        Get.theme.textTheme.caption!.copyWith(
+                                      fontSize: 12,
+                                      color: Get.theme.colorScheme.onBackground
+                                          .withOpacity(0.75),
+                                      fontWeight: FontWeight.bold,
                                     ),
                                   ),
                                 ],
                               ),
                             ),
-                            Spacing.w2,
+                            const Spacer(),
                             Text(
-                              'Sepanjang waktu',
-                              style: Get.theme.textTheme.caption!.copyWith(
-                                fontSize: 10,
+                              Helper.df.format(cr.record.createdAt),
+                              style: TextStyle(
+                                color: Get.theme.colorScheme.onBackground,
+                                fontSize: 12,
                               ),
-                            ),
+                            )
                           ],
                         ),
-                      ],
-                    ),
-                  ),
-                )
-              ],
-            ),
-          ),
-          const SliverToBoxAdapter(
-            child: SizedBox(height: 50 + Spacing.height * 12),
-          ),
-          SliverList(
-            delegate: SliverChildBuilderDelegate(
-              (_, i) {
-                final cr = controller.computedRecords[i];
-
-                // difference from average consumption
-                final diff =
-                    controller.calculationService.calculateDiff(cr.dailyUsage);
-                final color =
-                    controller.calculationService.calculateColor(cr.dailyUsage);
-
-                String status = '-';
-                IconData icon = Icons.circle_rounded;
-
-                if (diff.abs().toPrecision(2) >= 0 &&
-                    diff.abs().toPrecision(2) < 0.1) {
-                  status = 'Penggunaan wajar';
-                } else if (diff < 0) {
-                  status = 'Penggunaan lebih tinggi daripada biasanya';
-                  icon = Icons.arrow_upward_rounded;
-                } else {
-                  status = 'Penggunaan lebih rendah daripada biasanya';
-                  icon = Icons.arrow_downward_rounded;
-                }
-
-                return Column(
-                  children: [
-                    ListTile(
-                      leading: CircleAvatar(
-                        backgroundColor: color,
-                        child: Container(
-                          padding: Spacing.p2,
-                          decoration: BoxDecoration(
-                            color: Get.theme.colorScheme.background,
-                            shape: BoxShape.circle,
-                          ),
-                          child: Icon(
-                            icon,
-                            color: color,
-                          ),
+                        subtitle: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Spacing.h2,
+                            if (cr.record.note != null)
+                              Text(
+                                "*${cr.record.note!}",
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
+                                  color: Get.theme.colorScheme.onBackground
+                                      .withOpacity(0.75),
+                                ),
+                              ),
+                            Text(
+                              status,
+                              style: const TextStyle(fontSize: 12),
+                            ),
+                            if (cr.record.addedPricePerKwh != null)
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Spacing.h4,
+                                  Text(
+                                    "Pembelian".tr,
+                                    style: Get.theme.textTheme.titleSmall,
+                                  ),
+                                  Spacing.h2,
+                                  Row(
+                                    children: [
+                                      Icon(
+                                        Icons.add_rounded,
+                                        color: Get.theme.colorScheme.tertiary,
+                                        size: 18,
+                                      ),
+                                      Kwh(value: cr.record.addedKwh!, size: 18),
+                                      const Spacer(),
+                                      Container(
+                                        height: 16,
+                                        width: 1,
+                                        color: Get
+                                            .theme.colorScheme.onBackground
+                                            .withOpacity(0.5),
+                                      ),
+                                      const Spacer(),
+                                      RichText(
+                                        text: TextSpan(
+                                          text: "Rp. ",
+                                          style: TextStyle(
+                                            color: Get
+                                                .theme.colorScheme.onBackground
+                                                .withOpacity(0.75),
+                                            fontSize: 12,
+                                          ),
+                                          children: [
+                                            TextSpan(
+                                              text: Helper.rp.format(
+                                                cr.record.addedKwhPrice,
+                                              ),
+                                              style: Get
+                                                  .theme.textTheme.caption!
+                                                  .copyWith(
+                                                fontSize: 18,
+                                                color: Get.theme.colorScheme
+                                                    .onBackground
+                                                    .withOpacity(0.75),
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                          ],
                         ),
                       ),
-                      title: Row(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          Kwh(value: cr.dailyUsage, size: 20),
-                          Spacing.w2,
-                          RichText(
-                            text: TextSpan(
-                              text: "/ Rp. ",
-                              style: TextStyle(
-                                color: Get.theme.colorScheme.onBackground
-                                    .withOpacity(0.75),
-                                fontSize: 9,
-                              ),
-                              children: [
-                                TextSpan(
-                                  text: Helper.rp.format(cr.dailyCost),
-                                  style: Get.theme.textTheme.caption!.copyWith(
-                                    fontSize: 12,
-                                    color: Get.theme.colorScheme.onBackground
-                                        .withOpacity(0.75),
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          const Spacer(),
-                          Text(
-                            Helper.df.format(cr.record.createdAt),
-                            style: TextStyle(
-                              color: Get.theme.colorScheme.onBackground,
-                              fontSize: 12,
-                            ),
-                          )
-                        ],
-                      ),
-                      subtitle: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Spacing.h2,
-                          if (cr.record.note != null)
-                            Text(
-                              "*${cr.record.note!}",
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold,
-                                color: Get.theme.colorScheme.onBackground
-                                    .withOpacity(0.75),
-                              ),
-                            ),
-                          Text(
-                            status,
-                            style: const TextStyle(fontSize: 12),
-                          ),
-                          if (cr.record.addedPricePerKwh != null)
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Spacing.h4,
-                                Text(
-                                  "Pembelian".tr,
-                                  style: Get.theme.textTheme.titleSmall,
-                                ),
-                                Spacing.h2,
-                                Row(
-                                  children: [
-                                    Icon(
-                                      Icons.add_rounded,
-                                      color: Get.theme.colorScheme.tertiary,
-                                      size: 18,
-                                    ),
-                                    Kwh(value: cr.record.addedKwh!, size: 18),
-                                    const Spacer(),
-                                    Container(
-                                      height: 16,
-                                      width: 1,
-                                      color: Get.theme.colorScheme.onBackground
-                                          .withOpacity(0.5),
-                                    ),
-                                    const Spacer(),
-                                    RichText(
-                                      text: TextSpan(
-                                        text: "Rp. ",
-                                        style: TextStyle(
-                                          color: Get
-                                              .theme.colorScheme.onBackground
-                                              .withOpacity(0.75),
-                                          fontSize: 12,
-                                        ),
-                                        children: [
-                                          TextSpan(
-                                            text: Helper.rp.format(
-                                              cr.record.addedKwhPrice,
-                                            ),
-                                            style: Get.theme.textTheme.caption!
-                                                .copyWith(
-                                              fontSize: 18,
-                                              color: Get.theme.colorScheme
-                                                  .onBackground
-                                                  .withOpacity(0.75),
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                        ],
-                      ),
-                    ),
-                    const Divider(height: Spacing.height * 12),
-                  ],
-                );
-              },
-              childCount: controller.computedRecords.length,
+                      const Divider(height: Spacing.height * 12),
+                    ],
+                  );
+                },
+                childCount: controller.computedRecords.length,
+              ),
             ),
-          ),
-        ],
-      ),
-    );
+          ],
+        ),
+        floatingActionButton: controller.showBackToTopButton.value
+            ? FloatingActionButton(
+                onPressed: controller.scrollToTop,
+                child: const Icon(
+                  Icons.arrow_upward_rounded,
+                ),
+              )
+            : null,
+      );
+    });
   }
 
   Obx _buildChart() {
