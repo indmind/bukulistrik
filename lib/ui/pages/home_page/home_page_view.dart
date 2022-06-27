@@ -265,25 +265,37 @@ class HomePageView extends GetView<HomePageController> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Spacing.h2,
-                            if (cr.record.note != null)
-                              Text(
-                                "*${cr.record.note!}",
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.bold,
-                                  color: Get.theme.colorScheme.onBackground
-                                      .withOpacity(0.75),
-                                ),
-                              ),
                             Text(
                               status,
                               style: const TextStyle(fontSize: 12),
                             ),
+                            Spacing.h2,
+                            if (cr.record.note != null)
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "Catatan: ",
+                                    style: Get.theme.textTheme.titleSmall,
+                                  ),
+                                  Expanded(
+                                    child: Text(
+                                      cr.record.note!,
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold,
+                                        color:
+                                            Get.theme.colorScheme.onBackground,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
                             if (cr.record.addedPricePerKwh != null)
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Spacing.h4,
+                                  Spacing.h2,
                                   Text(
                                     "Pembelian".tr,
                                     style: Get.theme.textTheme.titleSmall,
