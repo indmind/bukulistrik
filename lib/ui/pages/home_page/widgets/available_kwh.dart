@@ -1,13 +1,17 @@
+import 'package:bukulistrik/ui/pages/home_page/home_page_view.dart';
+import 'package:bukulistrik/ui/theme/helper.dart';
 import 'package:bukulistrik/ui/theme/spacing.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class AvailableKwh extends StatelessWidget {
-  final double usage;
+  final double available;
+  final double? inPrice;
 
   const AvailableKwh({
     Key? key,
-    required this.usage,
+    required this.available,
+    this.inPrice,
   }) : super(key: key);
 
   @override
@@ -35,23 +39,36 @@ class AvailableKwh extends StatelessWidget {
               ),
               Spacing.h1,
               // display 3.2 kwh (kwh in small font)
-              RichText(
-                text: TextSpan(
-                  text: usage.toStringAsFixed(2),
-                  style: TextStyle(
-                    color: Get.theme.colorScheme.onPrimary,
-                    fontSize: 20,
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Kwh(
+                    value: available,
+                    size: 20,
+                    style: TextStyle(color: Get.theme.colorScheme.onPrimary),
                   ),
-                  children: [
-                    TextSpan(
-                      text: ' kW H',
-                      style: TextStyle(
-                        color: Get.theme.colorScheme.onPrimary,
-                        fontSize: 10,
+                  if (inPrice != null)
+                    RichText(
+                      text: TextSpan(
+                        text: " / Rp. ",
+                        style: TextStyle(
+                          color:
+                              Get.theme.colorScheme.onPrimary.withOpacity(0.75),
+                          fontSize: 10,
+                        ),
+                        children: [
+                          TextSpan(
+                            text: Helper.rp.format(inPrice!),
+                            style: Get.theme.textTheme.caption!.copyWith(
+                              fontSize: 12,
+                              color: Get.theme.colorScheme.onPrimary,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                  ],
-                ),
+                ],
               ),
             ],
           ),

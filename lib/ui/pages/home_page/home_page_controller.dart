@@ -9,7 +9,7 @@ class HomePageController extends GetxController {
   final CalculationService calculationService = Get.find<CalculationService>();
 
   RxDouble lifetimeAverageConsumption = 0.0.obs;
-  RxDouble lastAvailableKwh = 0.0.obs;
+  Rx<ComputedRecord?> lastComputedRecord = Rx(null);
   RxString calculationTime = ''.obs;
   RxList<ComputedRecord> computedRecords = <ComputedRecord>[].obs;
 
@@ -67,8 +67,7 @@ class HomePageController extends GetxController {
     computedRecords.value =
         calculationService.computedRecords.reversed.toList();
 
-    lastAvailableKwh.value =
-        computedRecords.firstWhereOrNull((_) => true)?.record.availableKwh ?? 0;
+    lastComputedRecord.value = computedRecords.firstWhereOrNull((_) => true);
 
     final today = DateTime.now();
 

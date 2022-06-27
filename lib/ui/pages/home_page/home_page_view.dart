@@ -37,7 +37,13 @@ class HomePageView extends GetView<HomePageController> {
                 top: Spacing.padding * 4,
                 bottom: Spacing.padding,
               ),
-              child: AvailableKwh(usage: controller.lastAvailableKwh.value),
+              child: AvailableKwh(
+                available:
+                    controller.lastComputedRecord.value?.record.availableKwh ??
+                        0,
+                inPrice:
+                    controller.lastComputedRecord.value?.costOfAvailableKwh,
+              ),
             ),
           ),
           SliverToBoxAdapter(
@@ -230,7 +236,7 @@ class HomePageView extends GetView<HomePageController> {
                               ),
                               children: [
                                 TextSpan(
-                                  text: cr.dailyCost.toStringAsFixed(0),
+                                  text: Helper.rp.format(cr.dailyCost),
                                   style: Get.theme.textTheme.caption!.copyWith(
                                     fontSize: 12,
                                     color: Get.theme.colorScheme.onBackground
@@ -306,8 +312,9 @@ class HomePageView extends GetView<HomePageController> {
                                         ),
                                         children: [
                                           TextSpan(
-                                            text: cr.record.addedKwhPrice!
-                                                .toString(),
+                                            text: Helper.rp.format(
+                                              cr.record.addedKwhPrice,
+                                            ),
                                             style: Get.theme.textTheme.caption!
                                                 .copyWith(
                                               fontSize: 18,
@@ -484,19 +491,22 @@ class Kwh extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final mergedStyle = TextStyle(
+      color: Get.theme.colorScheme.onBackground.withOpacity(0.75),
+      fontSize: size,
+      fontWeight: FontWeight.bold,
+    ).merge(style);
+
     return RichText(
       text: TextSpan(
         text: value.toStringAsFixed(2),
-        style: (style ?? const TextStyle()).copyWith(
-          color: Get.theme.colorScheme.onBackground.withOpacity(0.75),
-          fontSize: size,
-          fontWeight: FontWeight.bold,
-        ),
+        style: mergedStyle,
         children: [
           TextSpan(
             text: ' kW H',
             style: Get.theme.textTheme.caption!.copyWith(
               fontSize: size * 0.4,
+              color: mergedStyle.color?.withOpacity(0.8),
             ),
           ),
         ],
