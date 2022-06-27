@@ -216,27 +216,32 @@ class HomePageView extends GetView<HomePageController> {
                         ),
                       ),
                       title: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
+                          Kwh(value: cr.dailyUsage, size: 20),
+                          Spacing.w2,
                           RichText(
                             text: TextSpan(
-                              text: cr.dailyUsage.toStringAsFixed(2),
+                              text: "/ Rp. ",
                               style: TextStyle(
-                                color: Get.theme.colorScheme.onBackground,
-                                fontSize: 20,
+                                color: Get.theme.colorScheme.onBackground
+                                    .withOpacity(0.75),
+                                fontSize: 9,
                               ),
                               children: [
                                 TextSpan(
-                                  text: ' kW H',
-                                  style: TextStyle(
-                                    color: Get.theme.colorScheme.onBackground,
-                                    fontSize: 8,
+                                  text: cr.dailyCost.toStringAsFixed(0),
+                                  style: Get.theme.textTheme.caption!.copyWith(
+                                    fontSize: 12,
+                                    color: Get.theme.colorScheme.onBackground
+                                        .withOpacity(0.75),
+                                    fontWeight: FontWeight.bold,
                                   ),
                                 ),
                               ],
                             ),
                           ),
+                          const Spacer(),
                           Text(
                             Helper.df.format(cr.record.createdAt),
                             style: TextStyle(
@@ -314,7 +319,7 @@ class HomePageView extends GetView<HomePageController> {
                                           ),
                                         ],
                                       ),
-                                    )
+                                    ),
                                   ],
                                 ),
                               ],
