@@ -74,8 +74,8 @@ class CalculationService extends GetxService {
 
     final belowAvgSpectrum = Rainbow(
       spectrum: [
-        const Color.fromARGB(255, 208, 241, 210),
-        const Color.fromARGB(255, 30, 143, 34)
+        const Color.fromARGB(255, 181, 242, 183),
+        Get.theme.colorScheme.tertiary,
       ],
       rangeStart: averageConsumption,
       rangeEnd: minConsumption,
@@ -83,15 +83,17 @@ class CalculationService extends GetxService {
 
     final aboveAvgSpectrum = Rainbow(
       spectrum: [
-        const Color.fromARGB(255, 237, 193, 190),
-        const Color.fromARGB(255, 164, 17, 6)
+        const Color.fromARGB(255, 255, 145, 185),
+        Get.theme.colorScheme.error,
       ],
       rangeStart: averageConsumption,
       rangeEnd: maxConsumption,
     );
 
-    if (kwh == averageConsumption) {
-      return Colors.white;
+    double diff = calculateDiff(kwh);
+
+    if (diff.abs().toPrecision(2) >= 0 && diff.abs().toPrecision(2) < 0.1) {
+      return const Color.fromARGB(255, 101, 207, 246);
     } else if (kwh > averageConsumption) {
       return aboveAvgSpectrum[kwh];
     } else {

@@ -36,7 +36,7 @@ class HomePageView extends GetView<HomePageController> {
                 top: Spacing.padding * 4,
                 bottom: Spacing.padding,
               ),
-              child: AverageUsage(usage: controller.averageConsumption.value),
+              child: AvailableKwh(usage: controller.lastAvailableKwh.value),
             ),
           ),
           SliverToBoxAdapter(
@@ -67,6 +67,100 @@ class HomePageView extends GetView<HomePageController> {
                           color: Get.theme.colorScheme.shadow,
                           blurRadius: 10,
                           offset: const Offset(0, 10),
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Obx(() {
+                          // listen to selectd range
+                          controller.chartRage.value;
+
+                          Color color = Get.theme.colorScheme.background;
+                          IconData icon = Icons.remove_rounded;
+
+                          double diff =
+                              controller.lifetimeAverageConsumption.value -
+                                  controller.displayedAverageConsumption;
+
+                          if (diff.abs().toPrecision(2) >= 0 &&
+                              diff.abs().toPrecision(2) < 0.1) {
+                            color = Get.theme.colorScheme.primary;
+                          } else if (diff > 0) {
+                            color =
+                                Get.theme.colorScheme.tertiary.withOpacity(0.8);
+                            icon = Icons.swipe_down_alt_rounded;
+                          } else {
+                            color =
+                                Get.theme.colorScheme.error.withOpacity(0.8);
+                            icon = Icons.swipe_up_alt_outlined;
+                          }
+
+                          return Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(icon, color: color),
+                              Spacing.w4,
+                              RichText(
+                                text: TextSpan(
+                                  text: controller.displayedAverageConsumption
+                                      .toStringAsFixed(2),
+                                  style: TextStyle(
+                                    color: Get.theme.colorScheme.onBackground
+                                        .withOpacity(0.75),
+                                    fontSize: 32,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  children: [
+                                    TextSpan(
+                                      text: ' kW H',
+                                      style:
+                                          Get.theme.textTheme.caption!.copyWith(
+                                        fontSize: 10,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          );
+                        }),
+                        Spacing.h4,
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Icon(Icons.data_usage_rounded, size: 14),
+                            Spacing.w2,
+                            RichText(
+                              text: TextSpan(
+                                text: controller.lifetimeAverageConsumption
+                                    .toStringAsFixed(2),
+                                style: TextStyle(
+                                  color: Get.theme.colorScheme.primary,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                ),
+                                children: [
+                                  TextSpan(
+                                    text: ' kW H',
+                                    style: TextStyle(
+                                      color: Get.theme.colorScheme.onBackground,
+                                      fontWeight: FontWeight.normal,
+                                      fontSize: 8,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Spacing.w2,
+                            Text(
+                              'Sepanjang waktu',
+                              style: Get.theme.textTheme.caption!.copyWith(
+                                fontSize: 10,
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
@@ -108,10 +202,17 @@ class HomePageView extends GetView<HomePageController> {
                     ListTile(
                       isThreeLine: true,
                       leading: CircleAvatar(
-                        backgroundColor: Get.theme.colorScheme.primary,
-                        child: Icon(
-                          icon,
-                          color: color,
+                        backgroundColor: color,
+                        child: Container(
+                          padding: Spacing.p2,
+                          decoration: BoxDecoration(
+                            color: Get.theme.colorScheme.background,
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(
+                            icon,
+                            color: color,
+                          ),
                         ),
                       ),
                       title: Row(
@@ -382,10 +483,10 @@ class HomePageView extends GetView<HomePageController> {
   }
 }
 
-class AverageUsage extends StatelessWidget {
+class AvailableKwh extends StatelessWidget {
   final double usage;
 
-  const AverageUsage({
+  const AvailableKwh({
     Key? key,
     required this.usage,
   }) : super(key: key);
@@ -407,7 +508,7 @@ class AverageUsage extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Penggunaan harian'.tr,
+                'Jumlah kW H Terakhir'.tr,
                 style: TextStyle(
                   color: Get.theme.colorScheme.onPrimary,
                   fontSize: 12,

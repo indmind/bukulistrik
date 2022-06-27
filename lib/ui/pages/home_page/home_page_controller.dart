@@ -8,7 +8,8 @@ enum ChartRange { week, month, year, all }
 class HomePageController extends GetxController {
   final CalculationService calculationService = Get.find<CalculationService>();
 
-  RxDouble averageConsumption = 0.0.obs;
+  RxDouble lifetimeAverageConsumption = 0.0.obs;
+  RxDouble lastAvailableKwh = 0.0.obs;
   RxString calculationTime = ''.obs;
   RxList<ComputedRecord> computedRecords = <ComputedRecord>[].obs;
 
@@ -42,6 +43,15 @@ class HomePageController extends GetxController {
     return dataSource;
   }
 
+  double get displayedAverageConsumption {
+    if (displayedData.isEmpty) return 0;
+
+    final sum = displayedData.fold<double>(
+        0, (value, element) => value + element.dailyUsage);
+
+    return sum / displayedData.length;
+  }
+
   @override
   void onInit() {
     super.onInit();
@@ -52,10 +62,13 @@ class HomePageController extends GetxController {
     Stopwatch stopwatch = Stopwatch()..start();
     calculationService.calculate();
 
-    averageConsumption.value = calculationService.averageConsumption;
+    lifetimeAverageConsumption.value = calculationService.averageConsumption;
 
     computedRecords.value =
         calculationService.computedRecords.reversed.toList();
+
+    lastAvailableKwh.value =
+        computedRecords.firstWhereOrNull((_) => true)?.record.availableKwh ?? 0;
 
     final today = DateTime.now();
 
