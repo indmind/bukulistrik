@@ -19,5 +19,6 @@ final kAppTheme = ThemeData.light().copyWith(
       statusBarColor: Colors.transparent,
     ),
   ),
+  scaffoldBackgroundColor: kColorScheme.background,
   textTheme: GoogleFonts.poppinsTextTheme(),
 );
