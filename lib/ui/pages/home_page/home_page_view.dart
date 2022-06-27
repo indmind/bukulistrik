@@ -117,7 +117,6 @@ class HomePageView extends GetView<HomePageController> {
                         Spacing.h4,
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
                             const Icon(Icons.data_usage_rounded, size: 14),
                             Spacing.w2,
@@ -143,10 +142,16 @@ class HomePageView extends GetView<HomePageController> {
                               ),
                             ),
                             Spacing.w2,
-                            Text(
-                              'Sepanjang waktu',
-                              style: Get.theme.textTheme.caption!.copyWith(
-                                fontSize: 10,
+                            SizedBox(
+                              height: 19,
+                              child: Align(
+                                alignment: Alignment.bottomLeft,
+                                child: Text(
+                                  'Sepanjang waktu',
+                                  style: Get.theme.textTheme.caption!.copyWith(
+                                    fontSize: 10,
+                                  ),
+                                ),
                               ),
                             ),
                           ],
