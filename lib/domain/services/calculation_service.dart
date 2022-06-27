@@ -26,6 +26,7 @@ class CalculationService extends GetxService {
     // IMPORTANT: order by date
     records.sort((a, b) => a.createdAt.compareTo(b.createdAt));
 
+    memoization.clear();
     computedRecords.clear();
 
     for (int i = 0; i < records.length; i++) {
