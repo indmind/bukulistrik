@@ -17,7 +17,7 @@ class HomePageView extends GetView<HomePageController> {
         controller: controller.scrollController,
         slivers: [
           SliverAppBar(
-            // elevation: 0,
+            elevation: 1,
             pinned: true,
             centerTitle: true,
             title: Text(
