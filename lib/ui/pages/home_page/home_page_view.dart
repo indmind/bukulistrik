@@ -85,7 +85,7 @@ class HomePageView extends GetView<HomePageController> {
                           controller.chartRage.value;
 
                           Color color = Get.theme.colorScheme.background;
-                          IconData icon = Icons.remove_rounded;
+                          IconData icon = Icons.circle_rounded;
 
                           double diff =
                               controller.lifetimeAverageConsumption.value -
@@ -93,7 +93,7 @@ class HomePageView extends GetView<HomePageController> {
 
                           if (diff.abs().toPrecision(2) >= 0 &&
                               diff.abs().toPrecision(2) < 0.1) {
-                            color = Get.theme.colorScheme.primary;
+                            color = Get.theme.colorScheme.secondary;
                           } else if (diff > 0) {
                             color =
                                 Get.theme.colorScheme.tertiary.withOpacity(0.8);
@@ -107,7 +107,7 @@ class HomePageView extends GetView<HomePageController> {
                           return Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Icon(icon, color: color),
+                              Icon(icon, color: color, size: 20),
                               Spacing.w4,
                               RichText(
                                 text: TextSpan(
@@ -191,7 +191,7 @@ class HomePageView extends GetView<HomePageController> {
                     controller.calculationService.calculateColor(cr.dailyUsage);
 
                 String status = '-';
-                IconData icon = Icons.remove_rounded;
+                IconData icon = Icons.circle_rounded;
 
                 if (diff.abs().toPrecision(2) >= 0 &&
                     diff.abs().toPrecision(2) < 0.1) {

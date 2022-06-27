@@ -95,7 +95,7 @@ class CalculationService extends GetxService {
     double diff = calculateDiff(kwh);
 
     if (diff.abs().toPrecision(2) >= 0 && diff.abs().toPrecision(2) < 0.1) {
-      return const Color.fromARGB(255, 101, 207, 246);
+      return Get.theme.colorScheme.secondary;
     } else if (kwh > averageConsumption) {
       return aboveAvgSpectrum[kwh];
     } else {
