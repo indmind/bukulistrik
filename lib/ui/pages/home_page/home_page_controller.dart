@@ -28,7 +28,11 @@ class HomePageController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    calculate();
+
+    calculationService.computedRecords.listen((cp) {
+      updateData();
+    });
+
     scrollController = ScrollController()
       ..addListener(() {
         if (scrollController.offset >= 400) {
@@ -37,6 +41,13 @@ class HomePageController extends GetxController {
           showBackToTopButton.value = false;
         }
       });
+  }
+
+  @override
+  void onReady() {
+    super.onReady();
+
+    updateData();
   }
 
   void scrollToTop() {
@@ -138,7 +149,7 @@ class HomePageController extends GetxController {
     }
 
     if (benchmark == 0) {
-      return -1;
+      return 0;
     }
 
     return lastComputedRecord.value?.record.availableKwh != null
@@ -146,10 +157,7 @@ class HomePageController extends GetxController {
         : null;
   }
 
-  void calculate() async {
-    Stopwatch stopwatch = Stopwatch()..start();
-    calculationService.calculate();
-
+  void updateData() async {
     lifetimeAverageConsumption.value = calculationService.averageConsumption;
 
     computedRecords.value =
@@ -181,10 +189,6 @@ class HomePageController extends GetxController {
     ).toList();
 
     allUsage = computedRecords.toList();
-
-    stopwatch.stop();
-
-    calculationTime.value = 'Time elapsed: ${stopwatch.elapsed}';
   }
 
   void setRage(ChartRange range) {

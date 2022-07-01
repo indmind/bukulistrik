@@ -20,11 +20,16 @@ class AvailableKwh extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        CircleAvatar(
-          backgroundColor: Get.theme.colorScheme.secondary,
-          child: Icon(
-            Icons.electric_meter_outlined,
-            color: Get.theme.colorScheme.onSecondary,
+        GestureDetector(
+          onLongPress: () {
+            Get.toNamed('/debug');
+          },
+          child: CircleAvatar(
+            backgroundColor: Get.theme.colorScheme.secondary,
+            child: Icon(
+              Icons.electric_meter_outlined,
+              color: Get.theme.colorScheme.onSecondary,
+            ),
           ),
         ),
         Spacing.w8,

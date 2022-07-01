@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:bukulistrik/domain/models/computed_record.dart';
 import 'package:bukulistrik/domain/models/record.dart';
 import 'package:bukulistrik/domain/services/memoization_service.dart';
@@ -14,11 +16,30 @@ class CalculationService extends GetxService {
   double maxConsumption = 0.0;
 
   /// This variable stores computed records
-  final List<ComputedRecord> computedRecords = [];
+  final RxList<ComputedRecord> computedRecords = <ComputedRecord>[].obs;
+
+  @override
+  void onInit() {
+    super.onInit();
+
+    Get.find<RecordService>().records.listen((_) {
+      calculate();
+    });
+  }
+
+  @override
+  void onReady() {
+    super.onReady();
+
+    calculate();
+  }
 
   /// This method is used to calculate total consumption
   void calculate() {
-    final records = Get.find<RecordService>().records;
+    debugPrint("CalculationService.calculate");
+    Stopwatch stopwatch = Stopwatch()..start();
+
+    final records = Get.find<RecordService>().getCurrentRecords();
     final memoization = Get.find<MemoizationService>();
 
     double totalConsumption = 0.0;
@@ -27,14 +48,16 @@ class CalculationService extends GetxService {
     records.sort((a, b) => a.createdAt.compareTo(b.createdAt));
 
     memoization.clear();
-    computedRecords.clear();
+
+    // copy to temp list to avoid listener being called multiple times
+    final tempComputedRecords = <ComputedRecord>[];
 
     for (int i = 0; i < records.length; i++) {
       // copy each record to computedRecord
-      _copyToComputedRecord(records[i], memoization, i == 0);
+      _copyComputedTo(tempComputedRecords, records[i], memoization, i == 0);
     }
 
-    totalConsumption = computedRecords.fold<double>(0, (value, element) {
+    totalConsumption = tempComputedRecords.fold<double>(0, (value, element) {
       final consumption = element.dailyUsage;
 
       minConsumption =
@@ -45,26 +68,39 @@ class CalculationService extends GetxService {
       return value + consumption;
     });
 
-    averageConsumption = totalConsumption / computedRecords.length;
+    if (tempComputedRecords.isNotEmpty) {
+      averageConsumption = totalConsumption / tempComputedRecords.length;
+    } else {
+      averageConsumption = 0;
+    }
+
+    // IMPORTANT: update computed records last, to make sure all data is updated
+    computedRecords.value = tempComputedRecords;
+
+    stopwatch.stop();
+    debugPrint(
+      "CalculationService.calculate took ${stopwatch.elapsedMilliseconds} ms (${computedRecords.length} records)",
+    );
   }
 
-  void _copyToComputedRecord(Record record, MemoizationService memoization,
+  void _copyComputedTo(
+      List<ComputedRecord> list, Record record, MemoizationService memoization,
       [bool isFirst = false]) {
     if (isFirst) {
-      computedRecords.add(ComputedRecord(
+      list.add(ComputedRecord(
         record: record,
         memoizationService: memoization,
       ));
     } else {
-      computedRecords.add(ComputedRecord(
+      list.add(ComputedRecord(
         record: record,
-        prevRecord: computedRecords.last,
+        prevRecord: list.last,
         memoizationService: memoization,
       ));
     }
 
     // OPTIMIZATION: eager load memoization
-    computedRecords.last.initialize();
+    list.last.initialize();
   }
 
   Color calculateColor(double kwh) {
@@ -73,13 +109,21 @@ class CalculationService extends GetxService {
     // if kwh > averageConsumption, return redder the more the difference is, max follows maxConsumption
     // if kwh < averageConsumption, return greener the more the difference is, max follows minConsumption
 
+    double diff = calculateDiff(kwh);
+
+    if (diff.abs().toPrecision(2) < 0.1 ||
+        averageConsumption == minConsumption ||
+        averageConsumption == maxConsumption) {
+      return Get.theme.colorScheme.secondary;
+    }
+
     final belowAvgSpectrum = Rainbow(
       spectrum: [
         const Color.fromARGB(255, 181, 242, 183),
         Get.theme.colorScheme.tertiary,
       ],
-      rangeStart: averageConsumption,
-      rangeEnd: minConsumption,
+      rangeStart: min(averageConsumption, minConsumption),
+      rangeEnd: max(averageConsumption, minConsumption),
     );
 
     final aboveAvgSpectrum = Rainbow(
@@ -87,15 +131,11 @@ class CalculationService extends GetxService {
         const Color.fromARGB(255, 255, 145, 185),
         Get.theme.colorScheme.error,
       ],
-      rangeStart: averageConsumption,
-      rangeEnd: maxConsumption,
+      rangeStart: min(averageConsumption, maxConsumption),
+      rangeEnd: max(averageConsumption, maxConsumption),
     );
 
-    double diff = calculateDiff(kwh);
-
-    if (diff.abs().toPrecision(2) < 0.1) {
-      return Get.theme.colorScheme.secondary;
-    } else if (kwh > averageConsumption) {
+    if (kwh > averageConsumption) {
       return aboveAvgSpectrum[kwh];
     } else {
       return belowAvgSpectrum[kwh];

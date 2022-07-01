@@ -6,4 +6,18 @@ abstract class Helper {
 
   static final NumberFormat rp =
       NumberFormat.currency(locale: 'id', symbol: '', decimalDigits: 0);
+
+  static double? parseDouble(String? value) {
+    if (value == null) return null;
+    return double.tryParse(value.replaceAll(',', '.'));
+  }
+
+  static String? fromDouble(double? value, [int? fractionDigits]) {
+    if (value == null) return null;
+
+    String result = fractionDigits != null
+        ? value.toStringAsFixed(fractionDigits)
+        : value.toString();
+    return result.replaceAll('.', ',');
+  }
 }

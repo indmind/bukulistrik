@@ -2,6 +2,7 @@ import 'package:equatable/equatable.dart';
 
 /// This model is used to store electricity records
 class Record extends Equatable {
+  final String? id;
   final DateTime createdAt;
   final double availableKwh;
   final double? addedKwh;
@@ -9,6 +10,7 @@ class Record extends Equatable {
   final String? note;
 
   const Record({
+    this.id,
     required this.createdAt,
     required this.availableKwh,
     this.addedKwh,
@@ -22,4 +24,23 @@ class Record extends Equatable {
 
   @override
   List<Object> get props => [createdAt, availableKwh];
+
+  //copyWith
+  Record copyWith({
+    String? id,
+    DateTime? createdAt,
+    double? availableKwh,
+    double? addedKwh,
+    double? addedKwhPrice,
+    String? note,
+  }) {
+    return Record(
+      id: id ?? this.id,
+      createdAt: createdAt ?? this.createdAt,
+      availableKwh: availableKwh ?? this.availableKwh,
+      addedKwh: addedKwh ?? this.addedKwh,
+      addedKwhPrice: addedKwhPrice ?? this.addedKwhPrice,
+      note: note ?? this.note,
+    );
+  }
 }
