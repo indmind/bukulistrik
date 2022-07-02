@@ -1,10 +1,27 @@
+import 'package:bukulistrik/common/logger.dart';
 import 'package:bukulistrik/data/record_repository.dart';
 import 'package:bukulistrik/domain/models/record.dart';
+import 'package:bukulistrik/domain/services/house_service.dart';
 import 'package:get/get.dart';
 
 /// This class is used to store records
 class RecordService extends GetxService {
-  final _repository = RecordRepository(Get.find());
+  final RecordRepository _repository = Get.find();
+  final HouseService _houseService = Get.find();
+
+  final RxnString activeHouse = RxnString();
+
+  @override
+  void onInit() {
+    super.onInit();
+
+    activeHouse.bindStream(_houseService.activeHouse.stream);
+
+    ever(activeHouse, (String? houseId) {
+      Logger.d('RecordService: activeHouse changed to $houseId');
+      _repository.setHouseId(houseId);
+    });
+  }
 
   // Stream of records
   Stream<List<Record>> get recordsStream => _repository.getRecordsStream();

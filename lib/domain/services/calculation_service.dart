@@ -1,7 +1,9 @@
+import 'dart:async';
 import 'dart:math';
 
 import 'package:bukulistrik/domain/models/computed_record.dart';
 import 'package:bukulistrik/domain/models/record.dart';
+import 'package:bukulistrik/domain/services/house_service.dart';
 import 'package:bukulistrik/domain/services/memoization_service.dart';
 import 'package:bukulistrik/domain/services/record_service.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +12,9 @@ import 'package:rainbow_color/rainbow_color.dart';
 
 /// This class is used for records calculation
 class CalculationService extends GetxService {
+  final HouseService houseService = Get.find();
+  final RecordService recordService = Get.find();
+
   /// This variable stores average consumption
   double averageConsumption = 0.0;
   double minConsumption = 0.0;
@@ -18,30 +23,34 @@ class CalculationService extends GetxService {
   /// This variable stores computed records
   final RxList<ComputedRecord> computedRecords = <ComputedRecord>[].obs;
 
+  StreamSubscription<List<Record>>? _recordSubscription;
+
   @override
   void onInit() {
     super.onInit();
 
-    Get.find<RecordService>().recordsStream.listen((records) {
-      calculate(records);
+    ever(houseService.activeHouse, (String? houseId) async {
+      _recordSubscription?.cancel();
+      _recordSubscription = recordService.recordsStream.listen((records) {
+        calculate(records);
+      });
     });
   }
 
-  @override
-  void onReady() {
-    super.onReady();
+  // @override
+  // void onReady() {
+  //   super.onReady();
 
-    // initial call
-    calculate();
-  }
+  //   // initial call
+  //   calculate();
+  // }
 
   /// This method is used to calculate total consumption
   Future<void> calculate([List<Record>? availableRecords]) async {
     debugPrint("CalculationService.calculate");
     Stopwatch stopwatch = Stopwatch()..start();
 
-    final records =
-        availableRecords ?? await Get.find<RecordService>().getCurrentRecords();
+    final records = availableRecords ?? await recordService.getCurrentRecords();
     final memoization = Get.find<MemoizationService>();
 
     double totalConsumption = 0.0;

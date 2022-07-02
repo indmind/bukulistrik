@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "530928281361-8l8g6ki3f3kphbvgp7lfokvkgeq2hc2j.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "id.indmind.bukulistrik",
+            "certificate_hash": "883e8fb656a92d2bb5022f1e6cb2b4ddd2e591b7"
+          }
+        },
+        {
           "client_id": "530928281361-ufr0q8cdhogvmq1vommjttj6gn37s5nv.apps.googleusercontent.com",
           "client_type": 3
         }

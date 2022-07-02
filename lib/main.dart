@@ -3,6 +3,7 @@ import 'package:bukulistrik/firebase_options.dart';
 import 'package:bukulistrik/routes.dart';
 import 'package:bukulistrik/ui/theme/app_theme.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/date_symbol_data_local.dart';
@@ -15,6 +16,8 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
+  FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
 
   runApp(const MyApp());
 }

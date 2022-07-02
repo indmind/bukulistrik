@@ -1,25 +1,42 @@
 import 'package:bukulistrik/domain/models/record.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:get/state_manager.dart';
 
-class RecordRepository {
+extension DocRecordsExtension on DocumentReference {
+  CollectionReference<Map<String, dynamic>> get records =>
+      collection('records');
+}
+
+class RecordRepository extends GetxService {
   final FirebaseFirestore db;
+
+  final RxnString _houseId = RxnString();
 
   RecordRepository(this.db);
 
+  void setHouseId(String? houseId) {
+    _houseId.value = houseId;
+  }
+
+  /// [DocumentReference] should be referencing houses/{houseId}
+  DocumentReference get house => _houseId.value == null
+      ? db.collection('temp_records').doc()
+      : db.collection('houses').doc(_houseId.value);
+
   Future<void> addRecord(Record record) async {
-    db.collection('records').add(record.toJson());
+    house.records.add(record.toJson());
   }
 
   Future<void> updateRecord(Record record) async {
-    db.collection('records').doc(record.id).update(record.toJson());
+    house.records.doc(record.id).update(record.toJson());
   }
 
   Future<void> deleteRecord(Record record) async {
-    db.collection('records').doc(record.id).delete();
+    house.records.doc(record.id).delete();
   }
 
   Future<Record?> getRecord(String id) async {
-    final doc = await db.collection('records').doc(id).get();
+    final doc = await house.records.doc(id).get();
 
     if (doc.exists) {
       return Record.fromJson(doc.data()!).withId(doc.id);
@@ -29,7 +46,7 @@ class RecordRepository {
   }
 
   Future<List<Record>> getRecords() async {
-    final snapshot = await db.collection('records').get();
+    final snapshot = await house.records.get();
 
     return snapshot.docs.map((doc) {
       return Record.fromJson(doc.data()).withId(doc.id);
@@ -38,7 +55,7 @@ class RecordRepository {
 
   // stream data
   Stream<List<Record>> getRecordsStream() {
-    return db.collection('records').snapshots().map((snapshot) {
+    return house.records.snapshots().map((snapshot) {
       return snapshot.docs.map((doc) {
         return Record.fromJson(doc.data()).withId(doc.id);
       }).toList();
