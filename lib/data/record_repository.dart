@@ -7,15 +7,15 @@ class RecordRepository {
   RecordRepository(this.db);
 
   Future<void> addRecord(Record record) async {
-    await db.collection('records').add(record.toJson());
+    db.collection('records').add(record.toJson());
   }
 
   Future<void> updateRecord(Record record) async {
-    await db.collection('records').doc(record.id).update(record.toJson());
+    db.collection('records').doc(record.id).update(record.toJson());
   }
 
   Future<void> deleteRecord(Record record) async {
-    await db.collection('records').doc(record.id).delete();
+    db.collection('records').doc(record.id).delete();
   }
 
   Future<Record?> getRecord(String id) async {
