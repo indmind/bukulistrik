@@ -1,8 +1,14 @@
+import 'package:bukulistrik/data/record_repository.dart';
 import 'package:bukulistrik/domain/models/record.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
 
 /// This class is used to store records
 class RecordService extends GetxService {
+  final _repository = RecordRepository(
+    FirebaseFirestore.instance,
+  );
+
   /// This variable stores records
   RxList<Record> records = [
     Record(
@@ -76,23 +82,27 @@ class RecordService extends GetxService {
     //   )
   ].obs;
 
-  List<Record> getCurrentRecords() {
+  // Stream of records
+  Stream<List<Record>> get recordsStream => _repository.getRecordsStream();
+
+  Future<List<Record>> getCurrentRecords() async {
     // IMPORTANT: send the value, not the reference
-    return List.from(records);
+    return _repository.getRecords();
   }
 
   Future<void> save(Record record) async {
-    records.add(
-      record.copyWith(id: '${DateTime.now().millisecondsSinceEpoch}'),
-    );
+    if (record.id == null) {
+      await _repository.addRecord(record);
+    } else {
+      await _repository.updateRecord(record);
+    }
   }
 
   Future<void> delete(Record record) async {
-    records.removeWhere((element) => element.id == record.id);
+    await _repository.deleteRecord(record);
   }
 
   Future<void> update(Record record) async {
-    final index = records.indexWhere((element) => element.id == record.id);
-    records[index] = record;
+    await _repository.updateRecord(record);
   }
 }

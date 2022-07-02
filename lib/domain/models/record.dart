@@ -22,6 +22,26 @@ class Record extends Equatable {
       ? addedKwhPrice! / addedKwh!
       : null;
 
+  // to json
+  Map<String, dynamic> toJson() => {
+        'createdAt': createdAt.millisecondsSinceEpoch,
+        'availableKwh': availableKwh,
+        'addedKwh': addedKwh,
+        'addedKwhPrice': addedKwhPrice,
+        'note': note,
+      };
+
+  // from firesotre
+  factory Record.fromJson(Map<String, dynamic> json) => Record(
+        createdAt: DateTime.fromMillisecondsSinceEpoch(
+          json['createdAt'] as int,
+        ),
+        availableKwh: (json['availableKwh'] as num).toDouble(),
+        addedKwh: (json['addedKwh'] as num?)?.toDouble(),
+        addedKwhPrice: (json['addedKwhPrice'] as num?)?.toDouble(),
+        note: json['note'] as String?,
+      );
+
   @override
   List<Object> get props => [createdAt, availableKwh];
 
@@ -42,5 +62,9 @@ class Record extends Equatable {
       addedKwhPrice: addedKwhPrice ?? this.addedKwhPrice,
       note: note ?? this.note,
     );
+  }
+
+  Record withId(String id) {
+    return copyWith(id: id);
   }
 }

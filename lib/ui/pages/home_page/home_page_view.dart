@@ -272,7 +272,7 @@ class HomePageView extends GetView<HomePageController> {
                                 ],
                               ),
                             ),
-                            // const Spacer(),
+                            Spacing.w4,
                             Text(
                               Helper.df.format(cr.record.createdAt),
                               style: TextStyle(

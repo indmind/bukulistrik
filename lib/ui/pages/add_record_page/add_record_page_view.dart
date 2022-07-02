@@ -16,7 +16,9 @@ class AddRecordPageView extends GetView<AddRecordPageController> {
         systemOverlayStyle: SystemUiOverlayStyle.dark,
         backgroundColor: Get.theme.colorScheme.background,
         foregroundColor: Get.theme.colorScheme.onBackground,
-        title: const Text("Tambah"),
+        title: controller.record == null
+            ? const Text("Tambah")
+            : const Text("Perbarui"),
         elevation: 0,
         centerTitle: true,
         actions: [
@@ -236,7 +238,9 @@ class AddRecordPageView extends GetView<AddRecordPageController> {
                     height: 54,
                     child: ElevatedButton(
                       onPressed: controller.onSave,
-                      child: const Text("Tambah"),
+                      child: controller.record == null
+                          ? const Text("Tambah")
+                          : const Text("Perbarui"),
                     ),
                   ),
                 ],

@@ -62,6 +62,12 @@ class ComputedRecord extends Equatable {
     }
 
     if (isFirst) {
+      // return 0;
+
+      if (record.addedKwh != null) {
+        return (record.addedKwh ?? 0) - record.availableKwh;
+      }
+
       return 0;
     }
 
@@ -80,10 +86,11 @@ class ComputedRecord extends Equatable {
     }
 
     if (isFirst) {
-      return 0;
+      return dailyUsage * totalCostPerKwh;
     }
 
-    final cost = dailyUsage * prevRecord!.totalCostPerKwh;
+    // final cost = dailyUsage * prevRecord!.totalCostPerKwh;
+    final cost = dailyUsage * totalCostPerKwh;
 
     return memoizationService.memoize(record, 'dailyCost', cost);
   }

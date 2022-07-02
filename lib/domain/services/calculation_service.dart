@@ -22,8 +22,8 @@ class CalculationService extends GetxService {
   void onInit() {
     super.onInit();
 
-    Get.find<RecordService>().records.listen((_) {
-      calculate();
+    Get.find<RecordService>().recordsStream.listen((records) {
+      calculate(records);
     });
   }
 
@@ -31,15 +31,17 @@ class CalculationService extends GetxService {
   void onReady() {
     super.onReady();
 
+    // initial call
     calculate();
   }
 
   /// This method is used to calculate total consumption
-  void calculate() {
+  Future<void> calculate([List<Record>? availableRecords]) async {
     debugPrint("CalculationService.calculate");
     Stopwatch stopwatch = Stopwatch()..start();
 
-    final records = Get.find<RecordService>().getCurrentRecords();
+    final records =
+        availableRecords ?? await Get.find<RecordService>().getCurrentRecords();
     final memoization = Get.find<MemoizationService>();
 
     double totalConsumption = 0.0;

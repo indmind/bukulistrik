@@ -1,16 +1,25 @@
 import 'package:bukulistrik/app_binding.dart';
+import 'package:bukulistrik/firebase_options.dart';
 import 'package:bukulistrik/ui/pages/add_record_page/add_record_page_binding.dart';
 import 'package:bukulistrik/ui/pages/add_record_page/add_record_page_view.dart';
 import 'package:bukulistrik/ui/pages/debug/debug_page_view.dart';
 import 'package:bukulistrik/ui/pages/home_page/home_page_binding.dart';
 import 'package:bukulistrik/ui/pages/home_page/home_page_view.dart';
 import 'package:bukulistrik/ui/theme/app_theme.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
   initializeDateFormatting();
+
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
   runApp(const MyApp());
 }
 

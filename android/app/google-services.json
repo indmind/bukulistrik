@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "530928281361",
+    "project_id": "bukulistrik",
+    "storage_bucket": "bukulistrik.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:530928281361:android:a943d437ca31b7a29b0eb0",
+        "android_client_info": {
+          "package_name": "id.indmind.bukulistrik"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "530928281361-ufr0q8cdhogvmq1vommjttj6gn37s5nv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDJoa3XwgGat6UHITe_T6g8cZpiyTg2bn0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "530928281361-ufr0q8cdhogvmq1vommjttj6gn37s5nv.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
