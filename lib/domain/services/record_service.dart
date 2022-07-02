@@ -1,16 +1,10 @@
 import 'package:bukulistrik/data/record_repository.dart';
 import 'package:bukulistrik/domain/models/record.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
 
 /// This class is used to store records
 class RecordService extends GetxService {
-  final _repository = RecordRepository(
-    FirebaseFirestore.instance
-      ..settings = const Settings(
-        persistenceEnabled: true,
-      ),
-  );
+  final _repository = RecordRepository(Get.find());
 
   // Stream of records
   Stream<List<Record>> get recordsStream => _repository.getRecordsStream();
