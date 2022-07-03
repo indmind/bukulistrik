@@ -1,4 +1,6 @@
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
 abstract class Helper {
   // format as 20 Jul, 2020 13:45
@@ -19,5 +21,41 @@ abstract class Helper {
         ? value.toStringAsFixed(fractionDigits)
         : value.toString();
     return result.replaceAll('.', ',');
+  }
+
+  static TargetFocus buildSimpleTarget(
+    GlobalKey target,
+    String message, {
+    ShapeLightFocus shape = ShapeLightFocus.RRect,
+    ContentAlign contentAlign = ContentAlign.bottom,
+  }) {
+    return TargetFocus(
+      identify: target,
+      keyTarget: target,
+      shape: shape,
+      alignSkip: Alignment.topRight,
+      enableOverlayTab: true,
+      contents: [
+        TargetContent(
+          align: contentAlign,
+          builder: (context, controller) {
+            return IgnorePointer(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    message,
+                    style: const TextStyle(
+                      color: Colors.white,
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
+      ],
+    );
   }
 }

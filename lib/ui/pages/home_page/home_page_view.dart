@@ -43,6 +43,10 @@ class HomePageView extends GetView<HomePageController> {
               ),
               child: Obx(() {
                 return AvailableKwh(
+                  key: controller.tutorial.availableEnergyKey,
+                  availableKwhKey: controller.tutorial.availableKwhKey,
+                  availableMoneyKey: controller.tutorial.availableMoneyKey,
+                  availableDayleftKey: controller.tutorial.availableDayKey,
                   available: controller.availableKwh,
                   inPrice: controller.availableKwhValue,
                   predictedDayLeft: controller.dayLeftPrediction,
@@ -108,6 +112,8 @@ class HomePageView extends GetView<HomePageController> {
                           }
 
                           return Row(
+                            key: controller.tutorial.averageConsumptionKey,
+                            mainAxisSize: MainAxisSize.min,
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Icon(icon, color: color, size: 20),
@@ -126,6 +132,8 @@ class HomePageView extends GetView<HomePageController> {
                             const Icon(Icons.data_usage_rounded, size: 14),
                             Spacing.w2,
                             Obx(() => RichText(
+                                  key: controller
+                                      .tutorial.lifetimeAverageConsumptionKey,
                                   text: TextSpan(
                                     text: controller.lifetimeAverageConsumption
                                         .toStringAsFixed(2),
@@ -218,6 +226,7 @@ class HomePageView extends GetView<HomePageController> {
                   }
 
                   return Column(
+                    key: i == 0 ? controller.tutorial.usageRecordKey : null,
                     children: [
                       ListTile(
                         onTap: () {
@@ -409,6 +418,7 @@ class HomePageView extends GetView<HomePageController> {
             ),
             Spacing.h6,
             FloatingActionButton(
+              key: controller.tutorial.addRecordKey,
               onPressed: () {
                 Get.toNamed('/add-record');
               },
@@ -431,6 +441,7 @@ class HomePageView extends GetView<HomePageController> {
       final range = controller.chartRage.value;
 
       return Container(
+        key: controller.tutorial.usageChartKey,
         height: 150,
         color: Get.theme.colorScheme.primary,
         child: SfCartesianChart(
@@ -485,6 +496,7 @@ class HomePageView extends GetView<HomePageController> {
 
   Container _buildRangeSelector() {
     return Container(
+      key: controller.tutorial.usageChartRangeKey,
       color: Get.theme.colorScheme.primary,
       padding: Spacing.p8,
       child: Obx(() {

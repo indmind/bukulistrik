@@ -9,11 +9,18 @@ class AvailableKwh extends StatelessWidget {
   final double? inPrice;
   final int? predictedDayLeft;
 
+  final Key? availableKwhKey;
+  final Key? availableMoneyKey;
+  final Key? availableDayleftKey;
+
   const AvailableKwh({
     Key? key,
     required this.available,
     this.inPrice,
     this.predictedDayLeft,
+    this.availableKwhKey,
+    this.availableMoneyKey,
+    this.availableDayleftKey,
   }) : super(key: key);
 
   @override
@@ -50,12 +57,14 @@ class AvailableKwh extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Kwh(
+                    key: availableKwhKey,
                     value: available,
                     size: 20,
                     style: TextStyle(color: Get.theme.colorScheme.onPrimary),
                   ),
                   if (inPrice != null)
                     RichText(
+                      key: availableMoneyKey,
                       text: TextSpan(
                         text: " / Rp. ",
                         style: TextStyle(
@@ -83,6 +92,7 @@ class AvailableKwh extends StatelessWidget {
         // if (predictedDuration != null) const Spacer(),
         if (predictedDayLeft != null)
           RichText(
+            key: availableDayleftKey,
             text: TextSpan(
               text: predictedDayLeft!.toStringAsFixed(0),
               style: TextStyle(
