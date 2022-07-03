@@ -6,6 +6,7 @@ import 'package:bukulistrik/domain/models/record.dart';
 import 'package:bukulistrik/domain/services/house_service.dart';
 import 'package:bukulistrik/domain/services/memoization_service.dart';
 import 'package:bukulistrik/domain/services/record_service.dart';
+import 'package:firebase_performance/firebase_performance.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:rainbow_color/rainbow_color.dart';
@@ -48,12 +49,16 @@ class CalculationService extends GetxService {
   /// This method is used to calculate total consumption
   Future<void> calculate([List<Record>? availableRecords]) async {
     debugPrint("CalculationService.calculate");
-    Stopwatch stopwatch = Stopwatch()..start();
 
     final records = availableRecords ?? await recordService.getCurrentRecords();
     final memoization = Get.find<MemoizationService>();
 
     double totalConsumption = 0.0;
+
+    Trace calculationTrace =
+        FirebasePerformance.instance.newTrace('record-calculation-trace');
+    await calculationTrace.start();
+    Stopwatch stopwatch = Stopwatch()..start();
 
     // IMPORTANT: order by date
     records.sort((a, b) => a.createdAt.compareTo(b.createdAt));
@@ -88,6 +93,12 @@ class CalculationService extends GetxService {
     // IMPORTANT: update computed records last, to make sure all data is updated
     computedRecords.value = tempComputedRecords;
 
+    calculationTrace.putAttribute(
+      'number_of_records',
+      tempComputedRecords.length.toString(),
+    );
+
+    await calculationTrace.stop();
     stopwatch.stop();
     debugPrint(
       "CalculationService.calculate took ${stopwatch.elapsedMilliseconds} ms (${computedRecords.length} records)",

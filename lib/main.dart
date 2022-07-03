@@ -2,6 +2,7 @@ import 'package:bukulistrik/app_binding.dart';
 import 'package:bukulistrik/firebase_options.dart';
 import 'package:bukulistrik/routes.dart';
 import 'package:bukulistrik/ui/theme/app_theme.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
@@ -36,6 +37,9 @@ class MyApp extends StatelessWidget {
       theme: kAppTheme,
       getPages: Routes.all,
       initialRoute: Routes.initialRoute,
+      navigatorObservers: [
+        FirebaseAnalyticsObserver(analytics: FirebaseAnalytics.instance),
+      ],
     );
   }
 }
