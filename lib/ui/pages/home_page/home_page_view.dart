@@ -15,7 +15,7 @@ class HomePageView extends GetView<HomePageController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: const HomePageDrawer(),
+      drawer: HomePageDrawer(),
       body: CustomScrollView(
         controller: controller.scrollController,
         slivers: [

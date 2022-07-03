@@ -1,10 +1,12 @@
 import 'package:bukulistrik/domain/models/record.dart';
 import 'package:bukulistrik/domain/services/record_service.dart';
+import 'package:bukulistrik/ui/pages/add_record_page/add_record_page_tutorial.dart';
 import 'package:bukulistrik/ui/theme/helper.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class AddRecordPageController extends GetxController {
+  final AddRecordPageTutorial tutorial = Get.find();
   final formKey = GlobalKey<FormState>();
 
   final kwhController = TextEditingController();
@@ -36,10 +38,27 @@ class AddRecordPageController extends GetxController {
       if (record!.addedKwh != null && record!.addedKwhPrice != null) {
         initiallyExpanded = true;
       } else {
-        initiallyExpanded = false;
+        if (tutorial.hasShown) {
+          initiallyExpanded = false;
+        } else {
+          initiallyExpanded = true;
+        }
       }
     } else {
-      initiallyExpanded = false;
+      if (tutorial.hasShown) {
+        initiallyExpanded = false;
+      } else {
+        initiallyExpanded = true;
+      }
+    }
+  }
+
+  @override
+  void onReady() {
+    super.onReady();
+
+    if (!tutorial.hasShown && tutorial.tutorialCoachMark?.isShowing != true) {
+      tutorial.start();
     }
   }
 
