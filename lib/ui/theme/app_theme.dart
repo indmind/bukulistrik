@@ -4,14 +4,14 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 final kColorScheme = const ColorScheme.light().copyWith(
-  primary: const Color(0xFF2C459E),
+  primary: const Color(0xFF137A91),
   onPrimary: Colors.white,
-  secondary: const Color(0xFF15A4DE),
+  secondary: const Color(0xFF1AB6D9),
   onSecondary: Colors.white,
   shadow: Colors.black.withOpacity(0.05),
-  tertiary: const Color.fromARGB(255, 2, 169, 8),
-  error: const Color.fromARGB(255, 227, 15, 0),
-  onBackground: const Color.fromARGB(255, 35, 35, 35),
+  tertiary: const Color(0xFF02A966),
+  error: const Color(0xFFE35300),
+  onBackground: const Color(0xFF232323),
 );
 
 final kAppTheme = ThemeData.light().copyWith(

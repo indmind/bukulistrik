@@ -65,6 +65,7 @@ class AddRecordPageView extends GetView<AddRecordPageController> {
               child: Column(
                 children: [
                   TextFormField(
+                    key: controller.tutorial.availableKwhKey,
                     controller: controller.kwhController,
                     decoration: InputDecoration(
                       labelText: "*Sisa kW H",
@@ -95,6 +96,7 @@ class AddRecordPageView extends GetView<AddRecordPageController> {
                   ),
                   Spacing.h8,
                   DateTimeField(
+                    key: controller.tutorial.createdAtKey,
                     controller: controller.dateController,
                     format: Helper.df,
                     initialValue: controller.dateController.value.text.isEmpty
@@ -139,6 +141,7 @@ class AddRecordPageView extends GetView<AddRecordPageController> {
                   ),
                   Spacing.h8,
                   TextFormField(
+                    key: controller.tutorial.noteKey,
                     controller: controller.noteController,
                     decoration: InputDecoration(
                       labelText: "Catatan",
@@ -156,12 +159,14 @@ class AddRecordPageView extends GetView<AddRecordPageController> {
                   Theme(
                     data: Get.theme.copyWith(dividerColor: Colors.transparent),
                     child: ExpansionTile(
+                      key: controller.tutorial.purchaseKey,
                       initiallyExpanded: controller.initiallyExpanded,
                       title: const Text("Pembelian"),
                       tilePadding: EdgeInsets.zero,
                       textColor: Get.theme.colorScheme.onBackground,
                       children: [
                         TextFormField(
+                          key: controller.tutorial.purchaseAmountCostKey,
                           controller: controller.addedKwhPriceController,
                           decoration: InputDecoration(
                             labelText: "Nominal Pembelian",
@@ -195,6 +200,7 @@ class AddRecordPageView extends GetView<AddRecordPageController> {
                         ),
                         Spacing.h6,
                         TextFormField(
+                          key: controller.tutorial.purchaseAmountKwhKey,
                           controller: controller.addedKwhController,
                           decoration: InputDecoration(
                             labelText: "kW H yang didapat",
@@ -237,6 +243,7 @@ class AddRecordPageView extends GetView<AddRecordPageController> {
                     width: double.infinity,
                     height: 54,
                     child: ElevatedButton(
+                      key: controller.tutorial.saveKey,
                       onPressed: controller.onSave,
                       child: controller.record == null
                           ? const Text("Tambah")
