@@ -1,4 +1,4 @@
-import 'package:bukulistrik/ui/pages/home_page/home_page_view.dart';
+import 'package:bukulistrik/ui/pages/home_page/widgets/kwh.dart';
 import 'package:bukulistrik/ui/theme/helper.dart';
 import 'package:bukulistrik/ui/theme/spacing.dart';
 import 'package:flutter/material.dart';
@@ -9,22 +9,34 @@ class AvailableKwh extends StatelessWidget {
   final double? inPrice;
   final int? predictedDayLeft;
 
+  final Key? availableKwhKey;
+  final Key? availableMoneyKey;
+  final Key? availableDayleftKey;
+
   const AvailableKwh({
     Key? key,
     required this.available,
     this.inPrice,
     this.predictedDayLeft,
+    this.availableKwhKey,
+    this.availableMoneyKey,
+    this.availableDayleftKey,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
-        CircleAvatar(
-          backgroundColor: Get.theme.colorScheme.secondary,
-          child: Icon(
-            Icons.electric_meter_outlined,
-            color: Get.theme.colorScheme.onSecondary,
+        GestureDetector(
+          onLongPress: () {
+            Get.toNamed('/debug');
+          },
+          child: CircleAvatar(
+            backgroundColor: Get.theme.colorScheme.secondary,
+            child: Icon(
+              Icons.electric_meter_outlined,
+              color: Get.theme.colorScheme.onSecondary,
+            ),
           ),
         ),
         Spacing.w8,
@@ -45,12 +57,14 @@ class AvailableKwh extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Kwh(
+                    key: availableKwhKey,
                     value: available,
                     size: 20,
                     style: TextStyle(color: Get.theme.colorScheme.onPrimary),
                   ),
                   if (inPrice != null)
                     RichText(
+                      key: availableMoneyKey,
                       text: TextSpan(
                         text: " / Rp. ",
                         style: TextStyle(
@@ -78,6 +92,7 @@ class AvailableKwh extends StatelessWidget {
         // if (predictedDuration != null) const Spacer(),
         if (predictedDayLeft != null)
           RichText(
+            key: availableDayleftKey,
             text: TextSpan(
               text: predictedDayLeft!.toStringAsFixed(0),
               style: TextStyle(

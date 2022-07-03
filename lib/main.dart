@@ -1,15 +1,28 @@
 import 'package:bukulistrik/app_binding.dart';
-import 'package:bukulistrik/ui/pages/add_record_page/add_record_page_binding.dart';
-import 'package:bukulistrik/ui/pages/add_record_page/add_record_page_view.dart';
-import 'package:bukulistrik/ui/pages/home_page/home_page_binding.dart';
-import 'package:bukulistrik/ui/pages/home_page/home_page_view.dart';
+import 'package:bukulistrik/firebase_options.dart';
+import 'package:bukulistrik/routes.dart';
 import 'package:bukulistrik/ui/theme/app_theme.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
   initializeDateFormatting();
+
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
+  await GetStorage.init();
+
+  FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
+
   runApp(const MyApp());
 }
 
@@ -22,19 +35,11 @@ class MyApp extends StatelessWidget {
       title: 'Buku Listrik',
       initialBinding: AppBinding(),
       theme: kAppTheme,
-      getPages: [
-        GetPage(
-          name: '/',
-          page: () => const HomePageView(),
-          binding: HomePageBinding(),
-        ),
-        GetPage(
-          name: '/add-record',
-          page: () => const AddRecordPageView(),
-          binding: AddRecordPageBinding(),
-        ),
+      getPages: Routes.all,
+      initialRoute: Routes.initialRoute,
+      navigatorObservers: [
+        FirebaseAnalyticsObserver(analytics: FirebaseAnalytics.instance),
       ],
-      initialRoute: '/',
     );
   }
 }

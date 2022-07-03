@@ -30,15 +30,15 @@ abstract class Spacing {
   static EdgeInsets px2 = const EdgeInsets.symmetric(horizontal: padding * 2);
   static EdgeInsets px3 = const EdgeInsets.symmetric(horizontal: padding * 3);
   static EdgeInsets px4 = const EdgeInsets.symmetric(horizontal: padding * 4);
-  static EdgeInsets px6 = const EdgeInsets.symmetric(horizontal: padding * 5);
-  static EdgeInsets px8 = const EdgeInsets.symmetric(horizontal: padding * 6);
+  static EdgeInsets px6 = const EdgeInsets.symmetric(horizontal: padding * 6);
+  static EdgeInsets px8 = const EdgeInsets.symmetric(horizontal: padding * 8);
 
   static EdgeInsets py1 = const EdgeInsets.symmetric(vertical: padding);
   static EdgeInsets py2 = const EdgeInsets.symmetric(vertical: padding * 2);
   static EdgeInsets py3 = const EdgeInsets.symmetric(vertical: padding * 3);
   static EdgeInsets py4 = const EdgeInsets.symmetric(vertical: padding * 4);
-  static EdgeInsets py6 = const EdgeInsets.symmetric(vertical: padding * 5);
-  static EdgeInsets py8 = const EdgeInsets.symmetric(vertical: padding * 6);
+  static EdgeInsets py6 = const EdgeInsets.symmetric(vertical: padding * 6);
+  static EdgeInsets py8 = const EdgeInsets.symmetric(vertical: padding * 8);
 
   static BorderRadius rounded = BorderRadius.circular(10);
 }

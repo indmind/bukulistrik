@@ -1,5 +1,8 @@
 import 'package:bukulistrik/domain/models/computed_record.dart';
 import 'package:bukulistrik/domain/services/calculation_service.dart';
+import 'package:bukulistrik/domain/services/record_service.dart';
+import 'package:bukulistrik/ui/pages/home_page/home_page_tutorial.dart';
+import 'package:bukulistrik/ui/pages/home_page/widgets/add_first_record_bottom_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
@@ -7,6 +10,7 @@ import 'package:syncfusion_flutter_charts/charts.dart';
 enum ChartRange { week, month, year, all }
 
 class HomePageController extends GetxController {
+  final HomePageTutorial tutorial = Get.find();
   final CalculationService calculationService = Get.find<CalculationService>();
 
   late final ScrollController scrollController;
@@ -28,7 +32,11 @@ class HomePageController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    calculate();
+
+    calculationService.computedRecords.listen((cp) {
+      updateData();
+    });
+
     scrollController = ScrollController()
       ..addListener(() {
         if (scrollController.offset >= 400) {
@@ -37,6 +45,13 @@ class HomePageController extends GetxController {
           showBackToTopButton.value = false;
         }
       });
+  }
+
+  @override
+  void onReady() {
+    super.onReady();
+
+    updateData();
   }
 
   void scrollToTop() {
@@ -138,7 +153,7 @@ class HomePageController extends GetxController {
     }
 
     if (benchmark == 0) {
-      return -1;
+      return 0;
     }
 
     return lastComputedRecord.value?.record.availableKwh != null
@@ -146,10 +161,7 @@ class HomePageController extends GetxController {
         : null;
   }
 
-  void calculate() async {
-    Stopwatch stopwatch = Stopwatch()..start();
-    calculationService.calculate();
-
+  void updateData() async {
     lifetimeAverageConsumption.value = calculationService.averageConsumption;
 
     computedRecords.value =
@@ -182,9 +194,17 @@ class HomePageController extends GetxController {
 
     allUsage = computedRecords.toList();
 
-    stopwatch.stop();
+    String? activeHouse = calculationService.recordService.activeHouse.value;
 
-    calculationTime.value = 'Time elapsed: ${stopwatch.elapsed}';
+    if (activeHouse != null && computedRecords.isEmpty) {
+      // ask the user to input the first data
+      AddFirstRecordBottomSheet.show(Get.find<RecordService>().save);
+    } else if (activeHouse != null) {
+      if (!tutorial.hasShown && tutorial.tutorialCoachMark?.isShowing != true) {
+        await Future.delayed(1.seconds);
+        tutorial.start();
+      }
+    }
   }
 
   void setRage(ChartRange range) {
