@@ -1,5 +1,7 @@
 import 'package:bukulistrik/domain/models/computed_record.dart';
 import 'package:bukulistrik/domain/services/calculation_service.dart';
+import 'package:bukulistrik/domain/services/record_service.dart';
+import 'package:bukulistrik/ui/pages/home_page/widgets/add_first_record_bottom_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
@@ -189,6 +191,12 @@ class HomePageController extends GetxController {
     ).toList();
 
     allUsage = computedRecords.toList();
+
+    if (calculationService.recordService.activeHouse.value != null &&
+        computedRecords.isEmpty) {
+      // ask the user to input the first data
+      AddFirstRecordBottomSheet.show(Get.find<RecordService>().save);
+    }
   }
 
   void setRage(ChartRange range) {

@@ -1,4 +1,4 @@
-import 'package:bukulistrik/ui/pages/home_page/home_page_view.dart';
+import 'package:bukulistrik/ui/pages/home_page/widgets/kwh.dart';
 import 'package:bukulistrik/ui/theme/helper.dart';
 import 'package:bukulistrik/ui/theme/spacing.dart';
 import 'package:flutter/material.dart';

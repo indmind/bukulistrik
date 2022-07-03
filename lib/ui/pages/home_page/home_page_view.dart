@@ -1,7 +1,8 @@
 import 'package:bukulistrik/domain/models/computed_record.dart';
-import 'package:bukulistrik/ui/controllers/auth_controller.dart';
 import 'package:bukulistrik/ui/pages/home_page/home_page_controller.dart';
 import 'package:bukulistrik/ui/pages/home_page/widgets/available_kwh.dart';
+import 'package:bukulistrik/ui/pages/home_page/widgets/home_page_drawer.dart';
+import 'package:bukulistrik/ui/pages/home_page/widgets/kwh.dart';
 import 'package:bukulistrik/ui/theme/helper.dart';
 import 'package:bukulistrik/ui/theme/spacing.dart';
 import 'package:flutter/material.dart';
@@ -552,90 +553,6 @@ class HomePageView extends GetView<HomePageController> {
           ],
         );
       }),
-    );
-  }
-}
-
-class HomePageDrawer extends StatelessWidget {
-  const HomePageDrawer({
-    Key? key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Drawer(
-      child: ListView(
-        padding: EdgeInsets.zero,
-        children: [
-          Obx(
-            () {
-              final user = Get.find<AuthController>().user.value;
-
-              return UserAccountsDrawerHeader(
-                accountName: Text(user?.displayName ?? 'Guest'),
-                accountEmail: Text(user?.email ?? ''),
-                currentAccountPicture: CircleAvatar(
-                  backgroundColor: Get.theme.colorScheme.secondary,
-                  foregroundImage: user?.photoURL != null
-                      ? NetworkImage(user!.photoURL!)
-                      : null,
-                ),
-                decoration: BoxDecoration(
-                  color: Get.theme.colorScheme.primary,
-                ),
-              );
-            },
-          ),
-          ListTile(
-            title: const Text('Logout'),
-            leading: Icon(
-              Icons.exit_to_app,
-              color: Get.theme.colorScheme.error,
-            ),
-            onTap: () {
-              Get.find<AuthController>().signOut();
-            },
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class Kwh extends StatelessWidget {
-  final double value;
-  final double size;
-  final TextStyle? style;
-
-  const Kwh({
-    Key? key,
-    required this.value,
-    this.size = 16,
-    this.style,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    final mergedStyle = TextStyle(
-      color: Get.theme.colorScheme.onBackground.withOpacity(0.9),
-      fontSize: size,
-      fontWeight: FontWeight.bold,
-    ).merge(style);
-
-    return RichText(
-      text: TextSpan(
-        text: value.toStringAsFixed(2),
-        style: mergedStyle,
-        children: [
-          TextSpan(
-            text: ' kW H',
-            style: Get.theme.textTheme.caption!.copyWith(
-              fontSize: size * 0.4,
-              color: mergedStyle.color?.withOpacity(0.75),
-            ),
-          ),
-        ],
-      ),
     );
   }
 }
