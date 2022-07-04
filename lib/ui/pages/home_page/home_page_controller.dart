@@ -1,17 +1,22 @@
 import 'package:bukulistrik/domain/models/computed_record.dart';
+import 'package:bukulistrik/domain/services/ad_service.dart';
 import 'package:bukulistrik/domain/services/calculation_service.dart';
 import 'package:bukulistrik/domain/services/record_service.dart';
 import 'package:bukulistrik/ui/pages/home_page/home_page_tutorial.dart';
 import 'package:bukulistrik/ui/pages/home_page/widgets/add_first_record_bottom_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 enum ChartRange { week, month, year, all }
 
 class HomePageController extends GetxController {
   final HomePageTutorial tutorial = Get.find();
-  final CalculationService calculationService = Get.find<CalculationService>();
+  final CalculationService calculationService = Get.find();
+  final AdService adService = Get.find();
+
+  final Rx<BannerAd?> bannerAd = Rx<BannerAd?>(null);
 
   late final ScrollController scrollController;
   ChartSeriesController? chartController;
@@ -45,6 +50,12 @@ class HomePageController extends GetxController {
           showBackToTopButton.value = false;
         }
       });
+
+    initializeAd();
+
+    adService.adLoaded.listen((_) {
+      initializeAd();
+    });
   }
 
   @override
@@ -52,6 +63,14 @@ class HomePageController extends GetxController {
     super.onReady();
 
     updateData();
+  }
+
+  void initializeAd() {
+    if (adService.adLoaded[adService.homeBannerAd.adUnitId] == true) {
+      bannerAd.value = adService.homeBannerAd;
+    } else {
+      bannerAd.value = null;
+    }
   }
 
   void scrollToTop() {

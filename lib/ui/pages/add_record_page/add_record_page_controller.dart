@@ -1,4 +1,5 @@
 import 'package:bukulistrik/domain/models/record.dart';
+import 'package:bukulistrik/domain/services/ad_service.dart';
 import 'package:bukulistrik/domain/services/record_service.dart';
 import 'package:bukulistrik/ui/pages/add_record_page/add_record_page_tutorial.dart';
 import 'package:bukulistrik/ui/theme/helper.dart';
@@ -7,6 +8,7 @@ import 'package:get/get.dart';
 
 class AddRecordPageController extends GetxController {
   final AddRecordPageTutorial tutorial = Get.find();
+  final AdService adService = Get.find();
   final formKey = GlobalKey<FormState>();
 
   final kwhController = TextEditingController();
@@ -102,6 +104,8 @@ class AddRecordPageController extends GetxController {
       } else {
         await Get.find<RecordService>().save(newRecord);
       }
+
+      await adService.interstitialAd.value?.show();
 
       Get.back();
     }

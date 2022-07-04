@@ -1,5 +1,6 @@
 import 'package:bukulistrik/data/house_repository.dart';
 import 'package:bukulistrik/data/record_repository.dart';
+import 'package:bukulistrik/domain/services/ad_service.dart';
 import 'package:bukulistrik/domain/services/calculation_service.dart';
 import 'package:bukulistrik/domain/services/house_service.dart';
 import 'package:bukulistrik/domain/services/memoization_service.dart';
@@ -51,6 +52,9 @@ class AppBinding extends Bindings {
 
     // global controllers
     Get.put<AuthController>(AuthController());
+
+    // add
+    Get.put<AdService>(AdService());
 
     Get.put<MemoizationService>(MemoizationService());
     Get.lazyPut<HouseService>(() => HouseService());
