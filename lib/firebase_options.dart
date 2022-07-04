@@ -56,7 +56,7 @@ class DefaultFirebaseOptions {
     projectId: 'bukulistrik',
     authDomain: 'bukulistrik.firebaseapp.com',
     storageBucket: 'bukulistrik.appspot.com',
-    measurementId: 'G-E8XS38G8WS',
+    measurementId: 'G-G6MEQY8287',
   );
 
   static const FirebaseOptions android = FirebaseOptions(

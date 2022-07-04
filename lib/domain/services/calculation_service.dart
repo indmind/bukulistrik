@@ -52,12 +52,13 @@ class CalculationService extends GetxService {
 
     final records = availableRecords ?? await recordService.getCurrentRecords();
     final memoization = Get.find<MemoizationService>();
+    final performance = Get.find<FirebasePerformance>();
 
     double totalConsumption = 0.0;
 
-    Trace calculationTrace =
-        FirebasePerformance.instance.newTrace('record-calculation-trace');
+    Trace calculationTrace = performance.newTrace('record-calculation-trace');
     await calculationTrace.start();
+
     Stopwatch stopwatch = Stopwatch()..start();
 
     // IMPORTANT: order by date
