@@ -2,6 +2,7 @@ import 'package:bukulistrik/routes.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
@@ -36,7 +37,10 @@ class AuthController extends GetxController {
       Get.offAllNamed(Routes.login.name);
     } else {
       Get.find<FirebaseAnalytics>().setUserId(id: user.uid);
-      Get.find<FirebaseCrashlytics>().setUserIdentifier(user.uid);
+
+      if (!kIsWeb) {
+        Get.find<FirebaseCrashlytics>().setUserIdentifier(user.uid);
+      }
 
       // if user is in login page, then go home
       if (Get.currentRoute == Routes.login.name) {
