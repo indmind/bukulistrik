@@ -37,7 +37,9 @@ class AppBinding extends Bindings {
       fenix: true,
     );
     Get.lazyPut<FirebaseRemoteConfig>(
-      () => FirebaseRemoteConfig.instance..setDefaults(remoteConfigDefaults),
+      () => FirebaseRemoteConfig.instance
+        ..setDefaults(remoteConfigDefaults)
+        ..fetchAndActivate(),
       fenix: true,
     );
 
