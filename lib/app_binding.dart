@@ -1,3 +1,4 @@
+import 'package:bukulistrik/configs.dart';
 import 'package:bukulistrik/data/house_repository.dart';
 import 'package:bukulistrik/data/record_repository.dart';
 import 'package:bukulistrik/domain/services/ad_service.dart';
@@ -36,10 +37,7 @@ class AppBinding extends Bindings {
       fenix: true,
     );
     Get.lazyPut<FirebaseRemoteConfig>(
-      () => FirebaseRemoteConfig.instance
-        ..setDefaults(const {
-          'show_ads': false,
-        }),
+      () => FirebaseRemoteConfig.instance..setDefaults(remoteConfigDefaults),
       fenix: true,
     );
 
