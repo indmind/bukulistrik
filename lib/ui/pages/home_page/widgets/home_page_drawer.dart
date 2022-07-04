@@ -41,10 +41,7 @@ class HomePageDrawer extends StatelessWidget {
           ),
           ListTile(
             title: const Text('Tutorial antar muka'),
-            leading: Icon(
-              Icons.info_outline_rounded,
-              color: Get.theme.colorScheme.primary,
-            ),
+            leading: const Text('📱'),
             onTap: () async {
               await GetStorage().write(HomePageTutorial.storageKey, false);
               Get.back();
@@ -53,22 +50,22 @@ class HomePageDrawer extends StatelessWidget {
           ),
           ListTile(
             title: const Text('Tutorial tambah data'),
-            leading: Icon(
-              Icons.info_outline_rounded,
-              color: Get.theme.colorScheme.primary,
-            ),
+            leading: const Text('✋'),
             onTap: () async {
               await GetStorage().write(AddRecordPageTutorial.storageKey, false);
               Get.back();
               Get.toNamed(Routes.addRecord.name);
             },
           ),
+          // license page
           ListTile(
-            title: const Text('Logout'),
-            leading: Icon(
-              Icons.exit_to_app,
-              color: Get.theme.colorScheme.error,
-            ),
+            title: const Text('Lisensi'),
+            leading: const Text('🙏'),
+            onTap: () => showLicensePage(context: context),
+          ),
+          ListTile(
+            title: const Text('Keluar'),
+            leading: const Text('🚪'),
             onTap: () {
               Get.find<AuthController>().signOut();
             },
