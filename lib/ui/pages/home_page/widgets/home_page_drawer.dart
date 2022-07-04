@@ -61,7 +61,18 @@ class HomePageDrawer extends StatelessWidget {
           ListTile(
             title: const Text('Lisensi'),
             leading: const Text('🙏'),
-            onTap: () => showLicensePage(context: context),
+            onTap: () => showLicensePage(
+              context: context,
+              applicationIcon: Padding(
+                padding: const EdgeInsets.only(top: 12.0),
+                child: Image(
+                  image: const AssetImage('assets/images/logo-white.png'),
+                  width: 75,
+                  height: 75,
+                  color: Get.theme.colorScheme.primary,
+                ),
+              ),
+            ),
           ),
           ListTile(
             title: const Text('Keluar'),

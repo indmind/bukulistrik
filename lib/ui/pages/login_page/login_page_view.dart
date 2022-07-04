@@ -2,8 +2,7 @@ import 'package:bukulistrik/ui/pages/login_page/login_page_controller.dart';
 import 'package:bukulistrik/ui/theme/spacing.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_signin_button/button_list.dart';
-import 'package:flutter_signin_button/button_view.dart';
+import 'package:flutter_signin_button/flutter_signin_button.dart';
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
@@ -27,10 +26,29 @@ class LoginPageView extends GetView<LoginPageController> {
                   size: Size(Get.width, Get.height * 0.65),
                 ),
                 Positioned.fill(
-                  child: Icon(
-                    Icons.electric_meter_rounded,
-                    size: Get.width * 0.4,
-                    color: Get.theme.colorScheme.onPrimary,
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Image.asset(
+                          'assets/images/logo-white.png',
+                          width: Get.width * 0.5,
+                        ),
+                        Spacing.h8,
+                        Padding(
+                          padding: Spacing.px8 * 4,
+                          child: Text(
+                            'Catat penggunaan listrik dengan mudah!',
+                            textAlign: TextAlign.center,
+                            style: Get.textTheme.headline6!.copyWith(
+                              color: Get.theme.colorScheme.onPrimary,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ],
@@ -39,12 +57,31 @@ class LoginPageView extends GetView<LoginPageController> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  SignInButton(
-                    Buttons.GoogleDark,
+                  SignInButtonBuilder(
+                    elevation: 0,
+                    key: const ValueKey("Google"),
                     text: 'Masuk dengan Google',
+                    textColor: Get.theme.colorScheme.onPrimary,
+                    image: Container(
+                      color: Get.theme.colorScheme.primary,
+                      margin: const EdgeInsets.fromLTRB(4, 4, 10.0, 4),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(8.0),
+                        child: const Image(
+                          image: AssetImage(
+                            'assets/logos/google_light.png',
+                            package: 'flutter_signin_button',
+                          ),
+                          height: 36.0,
+                        ),
+                      ),
+                    ),
+                    backgroundColor: Get.theme.colorScheme.primary,
                     onPressed: () {
                       controller.signInWithGoogle();
                     },
+                    innerPadding: const EdgeInsets.all(0),
+                    height: 36.0,
                   ),
                   Spacing.h4,
                   Padding(
