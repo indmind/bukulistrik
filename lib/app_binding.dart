@@ -1,3 +1,4 @@
+import 'package:bukulistrik/configs.dart';
 import 'package:bukulistrik/data/house_repository.dart';
 import 'package:bukulistrik/data/record_repository.dart';
 import 'package:bukulistrik/domain/services/ad_service.dart';
@@ -11,6 +12,7 @@ import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_performance/firebase_performance.dart';
+import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:get/instance_manager.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
@@ -32,6 +34,10 @@ class AppBinding extends Bindings {
     );
     Get.lazyPut<FirebasePerformance>(
       () => FirebasePerformance.instance,
+      fenix: true,
+    );
+    Get.lazyPut<FirebaseRemoteConfig>(
+      () => FirebaseRemoteConfig.instance..setDefaults(remoteConfigDefaults),
       fenix: true,
     );
 

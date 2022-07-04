@@ -1,9 +1,12 @@
 import 'package:bukulistrik/common/logger.dart';
+import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/foundation.dart';
-import 'package:get/state_manager.dart';
+import 'package:get/get.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 class AdService extends GetxService {
+  final FirebaseRemoteConfig remoteConfig = Get.find();
+
   final _bannerTestId = 'ca-app-pub-3940256099942544/6300978111';
   final _interstitialTestId = 'ca-app-pub-3940256099942544/1033173712';
 
@@ -88,6 +91,13 @@ class AdService extends GetxService {
   Rx<InterstitialAd?> interstitialAd = Rx<InterstitialAd?>(null);
 
   Future<void> loadAds() async {
+    final showAds = remoteConfig.getBool('show_ads');
+
+    if (!showAds) {
+      Logger.d('AdService.loadAds: Ads are disabled by remote config.');
+      return;
+    }
+
     await homeBannerAd.load();
 
     await loadInterstitialAd();
