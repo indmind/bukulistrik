@@ -6,8 +6,10 @@ import 'package:bukulistrik/domain/services/memoization_service.dart';
 import 'package:bukulistrik/domain/services/record_service.dart';
 import 'package:bukulistrik/ui/controllers/auth_controller.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:firebase_performance/firebase_performance.dart';
 import 'package:get/instance_manager.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
@@ -15,14 +17,29 @@ class AppBinding extends Bindings {
   @override
   void dependencies() {
     // firebase
-    Get.lazyPut<FirebaseAuth>(() => FirebaseAuth.instance);
-    Get.lazyPut<FirebaseCrashlytics>(() => FirebaseCrashlytics.instance);
+    Get.lazyPut<FirebaseAuth>(
+      () => FirebaseAuth.instance,
+      fenix: true,
+    );
+    Get.lazyPut<FirebaseAnalytics>(
+      () => FirebaseAnalytics.instance,
+      fenix: true,
+    );
+    Get.lazyPut<FirebaseCrashlytics>(
+      () => FirebaseCrashlytics.instance,
+      fenix: true,
+    );
+    Get.lazyPut<FirebasePerformance>(
+      () => FirebasePerformance.instance,
+      fenix: true,
+    );
 
     Get.lazyPut<FirebaseFirestore>(
       () => FirebaseFirestore.instance
         ..settings = const Settings(
           persistenceEnabled: true,
         ),
+      fenix: true,
     );
 
     // repositories

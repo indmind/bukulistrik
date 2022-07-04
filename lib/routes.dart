@@ -14,7 +14,7 @@ abstract class Routes {
     binding: LoginPageBinding(),
   );
   static final home = GetPage(
-    name: '/x',
+    name: '/home',
     page: () => const HomePageView(),
     binding: HomePageBinding(),
   );
