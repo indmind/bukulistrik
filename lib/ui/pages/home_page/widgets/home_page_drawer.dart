@@ -41,10 +41,7 @@ class HomePageDrawer extends StatelessWidget {
           ),
           ListTile(
             title: const Text('Tutorial antar muka'),
-            leading: Icon(
-              Icons.info_outline_rounded,
-              color: Get.theme.colorScheme.primary,
-            ),
+            leading: const Text('📱'),
             onTap: () async {
               await GetStorage().write(HomePageTutorial.storageKey, false);
               Get.back();
@@ -53,22 +50,33 @@ class HomePageDrawer extends StatelessWidget {
           ),
           ListTile(
             title: const Text('Tutorial tambah data'),
-            leading: Icon(
-              Icons.info_outline_rounded,
-              color: Get.theme.colorScheme.primary,
-            ),
+            leading: const Text('✋'),
             onTap: () async {
               await GetStorage().write(AddRecordPageTutorial.storageKey, false);
               Get.back();
               Get.toNamed(Routes.addRecord.name);
             },
           ),
+          // license page
           ListTile(
-            title: const Text('Logout'),
-            leading: Icon(
-              Icons.exit_to_app,
-              color: Get.theme.colorScheme.error,
+            title: const Text('Lisensi'),
+            leading: const Text('🙏'),
+            onTap: () => showLicensePage(
+              context: context,
+              applicationIcon: Padding(
+                padding: const EdgeInsets.only(top: 12.0),
+                child: Image(
+                  image: const AssetImage('assets/images/logo-white.png'),
+                  width: 75,
+                  height: 75,
+                  color: Get.theme.colorScheme.primary,
+                ),
+              ),
             ),
+          ),
+          ListTile(
+            title: const Text('Keluar'),
+            leading: const Text('🚪'),
             onTap: () {
               Get.find<AuthController>().signOut();
             },
