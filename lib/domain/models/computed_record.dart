@@ -54,16 +54,15 @@ class ComputedRecord extends Equatable {
     return memoizationService.memoize(record, 'costOfAvailableKwh', cost);
   }
 
-  double get dailyUsage {
-    final memoized = memoizationService.getMemoized(record, 'dailyUsage');
+  double get fromLastRecordUsage {
+    final memoized =
+        memoizationService.getMemoized(record, 'fromLastRecordUsage');
 
     if (memoized is double) {
       return memoized;
     }
 
     if (isFirst) {
-      // return 0;
-
       if (record.addedKwh != null) {
         return (record.addedKwh ?? 0) - record.availableKwh;
       }
@@ -71,9 +70,71 @@ class ComputedRecord extends Equatable {
       return 0;
     }
 
+    // usage based on the difference between the previous record and the current record
     final usage = prevRecord!.record.availableKwh -
         record.availableKwh +
         (record.addedKwh ?? 0);
+
+    return memoizationService.memoize(record, 'fromLastRecordUsage', usage);
+  }
+
+  double get fromLastRecordCost {
+    final memoized =
+        memoizationService.getMemoized(record, 'fromLastRecordCost');
+
+    if (memoized is double) {
+      return memoized;
+    }
+
+    if (isFirst) {
+      return fromLastRecordUsage * totalCostPerKwh;
+    }
+
+    // final cost = dailyUsage * prevRecord!.totalCostPerKwh;
+    final cost = fromLastRecordUsage * totalCostPerKwh;
+
+    return memoizationService.memoize(record, 'fromLastRecordCost', cost);
+  }
+
+  double get hourlyUsage {
+    final memoized = memoizationService.getMemoized(record, 'hourlyUsage');
+
+    if (memoized is double) {
+      return memoized;
+    }
+
+    if (isFirst) {
+      return fromLastRecordUsage / 24;
+    }
+
+    final duration = record.createdAt.difference(prevRecord!.record.createdAt);
+
+    final usage = fromLastRecordUsage / duration.inHours;
+
+    return memoizationService.memoize(record, 'hourlyUsage', usage);
+  }
+
+  double get hourlyCost {
+    final memoized = memoizationService.getMemoized(record, 'hourlyCost');
+
+    if (memoized is double) {
+      return memoized;
+    }
+
+    final cost = hourlyUsage * totalCostPerKwh;
+
+    return memoizationService.memoize(record, 'hourlyCost', cost);
+  }
+
+  /// daily usage is calculated based from hourly usage * 24
+  double get dailyUsage {
+    final memoized = memoizationService.getMemoized(record, 'dailyUsage');
+
+    if (memoized is double) {
+      return memoized;
+    }
+
+    final usage = hourlyUsage * 24;
 
     return memoizationService.memoize(record, 'dailyUsage', usage);
   }
@@ -85,11 +146,6 @@ class ComputedRecord extends Equatable {
       return memoized;
     }
 
-    if (isFirst) {
-      return dailyUsage * totalCostPerKwh;
-    }
-
-    // final cost = dailyUsage * prevRecord!.totalCostPerKwh;
     final cost = dailyUsage * totalCostPerKwh;
 
     return memoizationService.memoize(record, 'dailyCost', cost);
@@ -102,6 +158,10 @@ class ComputedRecord extends Equatable {
   void initialize() {
     totalCostPerKwh;
     costOfAvailableKwh;
+    fromLastRecordUsage;
+    fromLastRecordCost;
+    hourlyUsage;
+    hourlyCost;
     dailyUsage;
     dailyCost;
   }

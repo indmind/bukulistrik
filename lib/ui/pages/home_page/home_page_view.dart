@@ -219,10 +219,12 @@ class HomePageView extends GetView<HomePageController> {
                         final cr = controller.computedRecords[i];
 
                         // difference from average consumption
-                        final diff = controller.calculationService
-                            .calculateDiff(cr.dailyUsage);
+                        final diff = (controller.calculationService.dailyMeta
+                                    .averageConsumption ??
+                                0) -
+                            cr.dailyUsage;
                         final color = controller.calculationService
-                            .calculateColor(cr.dailyUsage);
+                            .calculateDailyUsageColor(cr.dailyUsage);
 
                         String status = '-';
                         IconData icon = Icons.circle_rounded;
@@ -270,7 +272,10 @@ class HomePageView extends GetView<HomePageController> {
                                       crossAxisAlignment:
                                           WrapCrossAlignment.end,
                                       children: [
-                                        Kwh(value: cr.dailyUsage, size: 20),
+                                        Kwh(
+                                          value: cr.dailyUsage,
+                                          size: 20,
+                                        ),
                                         Spacing.w2,
                                         RichText(
                                           text: TextSpan(
@@ -283,8 +288,9 @@ class HomePageView extends GetView<HomePageController> {
                                             ),
                                             children: [
                                               TextSpan(
-                                                text: Helper.rp
-                                                    .format(cr.dailyCost),
+                                                text: Helper.rp.format(
+                                                  cr.dailyCost,
+                                                ),
                                                 style: Get
                                                     .theme.textTheme.caption!
                                                     .copyWith(
@@ -494,7 +500,8 @@ class HomePageView extends GetView<HomePageController> {
               onRendererCreated: (chartController) {
                 controller.chartController = chartController;
               },
-              yValueMapper: (ComputedRecord cp, _) => cp.dailyUsage,
+              yValueMapper: (ComputedRecord cp, _) =>
+                  double.parse(cp.dailyUsage.toStringAsFixed(2)),
               xValueMapper: (ComputedRecord cp, _) => cp.record.createdAt,
               xAxisName: 'Date',
               color: Get.theme.colorScheme.onPrimary.withOpacity(0.75),
