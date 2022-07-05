@@ -23,6 +23,13 @@ abstract class Helper {
     return result.replaceAll('.', ',');
   }
 
+  static bool isToday(DateTime date) {
+    DateTime today = DateTime.now();
+    return today.year == date.year &&
+        today.month == date.month &&
+        today.day == date.day;
+  }
+
   static TargetFocus buildSimpleTarget(
     GlobalKey target,
     String message, {

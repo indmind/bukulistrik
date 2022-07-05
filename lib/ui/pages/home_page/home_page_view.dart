@@ -254,39 +254,7 @@ class HomePageView extends GetView<HomePageController> {
                 }),
               ],
             ),
-            floatingActionButton: Obx(() {
-              return Wrap(
-                direction: Axis.vertical,
-                children: [
-                  AnimatedSwitcher(
-                    duration: 150.milliseconds,
-                    transitionBuilder: (child, animation) => ScaleTransition(
-                      scale: animation,
-                      child: child,
-                    ),
-                    switchInCurve: Curves.easeIn,
-                    child: controller.showBackToTopButton.value
-                        ? FloatingActionButton(
-                            heroTag: 'scroll-to-top-fab',
-                            onPressed: controller.scrollToTop,
-                            child: const Icon(
-                              Icons.arrow_upward_rounded,
-                            ),
-                          )
-                        : const SizedBox.shrink(),
-                  ),
-                  Spacing.h6,
-                  FloatingActionButton(
-                    key: controller.tutorial.addRecordKey,
-                    onPressed: () {
-                      Get.toNamed('/add-record');
-                    },
-                    backgroundColor: Get.theme.colorScheme.primary,
-                    child: const Icon(Icons.add_rounded),
-                  ),
-                ],
-              );
-            }),
+            floatingActionButton: _buildFAB(),
           ),
         ),
         Obx(() {
@@ -305,6 +273,40 @@ class HomePageView extends GetView<HomePageController> {
         }),
       ],
     );
+  }
+
+  Widget _buildFAB() {
+    return Obx(() {
+      return Wrap(
+        direction: Axis.vertical,
+        children: [
+          AnimatedSwitcher(
+            duration: 150.milliseconds,
+            transitionBuilder: (child, animation) => ScaleTransition(
+              scale: animation,
+              child: child,
+            ),
+            switchInCurve: Curves.easeIn,
+            child: controller.showBackToTopButton.value
+                ? FloatingActionButton(
+                    heroTag: 'scroll-to-top-fab',
+                    onPressed: controller.scrollToTop,
+                    child: const Icon(
+                      Icons.arrow_upward_rounded,
+                    ),
+                  )
+                : const SizedBox.shrink(),
+          ),
+          Spacing.h6,
+          FloatingActionButton(
+            key: controller.tutorial.addRecordKey,
+            onPressed: controller.onAddRecord,
+            backgroundColor: Get.theme.colorScheme.primary,
+            child: const Icon(Icons.add_rounded),
+          ),
+        ],
+      );
+    });
   }
 
   Obx _buildChart() {
