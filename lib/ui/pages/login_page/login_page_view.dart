@@ -97,23 +97,23 @@ class LoginPageView extends GetView<LoginPageController> {
                           ),
 
                           // terms and conditions
-                          TextSpan(
-                            text: 'Syarat dan Ketentuan',
-                            style: Get.textTheme.caption!.copyWith(
-                              color: Get.theme.colorScheme.primary,
-                            ),
-                            recognizer: TapGestureRecognizer()
-                              ..onTap = () async {
-                                const url = 'https://bukulistrik.web.app/terms';
-                                if (await canLaunchUrlString(url)) {
-                                  await launchUrlString(url);
-                                }
-                              },
-                          ),
-                          TextSpan(
-                            style: Get.textTheme.caption,
-                            text: ' serta ',
-                          ),
+                          // TextSpan(
+                          //   text: 'Syarat dan Ketentuan',
+                          //   style: Get.textTheme.caption!.copyWith(
+                          //     color: Get.theme.colorScheme.primary,
+                          //   ),
+                          //   recognizer: TapGestureRecognizer()
+                          //     ..onTap = () async {
+                          //       const url = 'https://bukulistrik.web.app/terms';
+                          //       if (await canLaunchUrlString(url)) {
+                          //         await launchUrlString(url);
+                          //       }
+                          //     },
+                          // ),
+                          // TextSpan(
+                          //   style: Get.textTheme.caption,
+                          //   text: ' serta ',
+                          // ),
                           TextSpan(
                             text: 'Kebijakan Privasi',
                             style: Get.textTheme.caption!.copyWith(
@@ -122,7 +122,7 @@ class LoginPageView extends GetView<LoginPageController> {
                             recognizer: TapGestureRecognizer()
                               ..onTap = () async {
                                 const url =
-                                    'https://bukulistrik.web.app/privacy';
+                                    'https://bukulistrikapp.web.app/policy.html';
                                 if (await canLaunchUrlString(url)) {
                                   await launchUrlString(url);
                                 }
