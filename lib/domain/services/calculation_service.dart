@@ -175,8 +175,8 @@ class CalculationService extends GetxService {
         const Color.fromARGB(255, 181, 242, 183),
         Get.theme.colorScheme.tertiary,
       ],
-      rangeStart: min(midBound, lowerBound),
-      rangeEnd: max(midBound, lowerBound),
+      rangeStart: max(midBound, lowerBound),
+      rangeEnd: min(midBound, lowerBound),
     );
 
     final aboveAvgSpectrum = Rainbow(
