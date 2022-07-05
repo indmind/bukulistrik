@@ -18,16 +18,13 @@ class CalculationService extends GetxService {
   final HouseService houseService = Get.find();
   final RecordService recordService = Get.find();
 
-  // /// This variable stores average consumption
-  // double averageConsumption = 0.0;
-  // double minConsumption = 0.0;
-  // double maxConsumption = 0.0;
-
   final hourlyMeta = CalculationMeta();
   final dailyMeta = CalculationMeta();
 
   /// This variable stores computed records
   final RxList<ComputedRecord> computedRecords = <ComputedRecord>[].obs;
+
+  final Rx<Duration> calculationTime = Duration.zero.obs;
 
   StreamSubscription<List<Record>>? _recordSubscription;
 
@@ -102,6 +99,8 @@ class CalculationService extends GetxService {
 
     await calculationTrace.stop();
     stopwatch.stop();
+
+    calculationTime.value = stopwatch.elapsed;
 
     Logger.d(
       "CalculationService.calculate took ${stopwatch.elapsedMilliseconds} ms (${computedRecords.length} records)",

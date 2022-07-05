@@ -18,58 +18,7 @@ class DebugPageView extends GetView<HomePageController> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Obx(
-                  () => Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      ElevatedButton(
-                        onPressed: () {
-                          controller.updateData();
-                        },
-                        child: const Text('Update Data'),
-                      ),
-                      Text(controller.calculationTime.value),
-                      SizedBox(
-                        width: Get.width,
-                        child: Table(
-                          children: [
-                            TableRow(
-                              children: [
-                                const Text('LAC:'),
-                                Text(
-                                  controller.lifetimeAverageConsumption.value
-                                      .toStringAsFixed(fraction),
-                                ),
-                              ],
-                            ),
-                            TableRow(
-                              children: [
-                                const Text('MinC:'),
-                                Text(
-                                  (controller.calculationService.dailyMeta
-                                              .minConsumption ??
-                                          0)
-                                      .toStringAsFixed(fraction),
-                                ),
-                              ],
-                            ),
-                            TableRow(
-                              children: [
-                                const Text('MaxC:'),
-                                Text(
-                                  (controller.calculationService.dailyMeta
-                                              .maxConsumption ??
-                                          0)
-                                      .toStringAsFixed(fraction),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+                _buildMeta(),
                 DataTable(
                   columns: const <DataColumn>[
                     DataColumn(
@@ -79,16 +28,19 @@ class DebugPageView extends GetView<HomePageController> {
                       label: Text('kW H'),
                     ),
                     DataColumn(
-                      label: Text('Penggunaan'),
+                      label: Text('Perbedaan'),
+                    ),
+                    DataColumn(
+                      label: Text('Penggunaan/Menit'),
                     ),
                     DataColumn(
                       label: Text('Penggunaan/Jam'),
                     ),
                     DataColumn(
-                      label: Text('Penggunaan/Hari[NORMAL]'),
+                      label: Text('Penggunaan/Hari'),
                     ),
                     DataColumn(
-                      label: Text('Biaya Penggunaan'),
+                      label: Text('Biaya Penggunaan/Hari'),
                     ),
                     DataColumn(
                       label: Text('kW H dalam Rp'),
@@ -121,14 +73,20 @@ class DebugPageView extends GetView<HomePageController> {
                         ),
                         DataCell(
                           Kwh(
+                            value: c.minutelyUsage,
+                            fractions: 5,
+                          ),
+                        ),
+                        DataCell(
+                          Kwh(
                             value: c.hourlyUsage,
-                            fractions: fraction,
+                            fractions: 3,
                           ),
                         ),
                         DataCell(
                           Kwh(
                             value: c.dailyUsage,
-                            fractions: fraction,
+                            fractions: 2,
                           ),
                         ),
                         DataCell(
@@ -158,6 +116,61 @@ class DebugPageView extends GetView<HomePageController> {
           ),
         ),
       ),
+    );
+  }
+
+  Obx _buildMeta() {
+    return Obx(
+      () => Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ElevatedButton(
+            onPressed: () {
+              controller.calculationService.calculate();
+            },
+            child: const Text('Update Data'),
+          ),
+          SizedBox(
+            width: Get.width,
+            child: Table(
+              children: [
+                _mr(
+                  'Count',
+                  controller.computedRecords.length.toString(),
+                ),
+                _mr(
+                  'Dur',
+                  controller.calculationService.calculationTime.toString(),
+                ),
+                _mr(
+                  'DAvgC',
+                  controller.lifetimeAverageConsumption.value
+                      .toStringAsFixed(fraction),
+                ),
+                _mr(
+                  'DMinC',
+                  (controller.calculationService.dailyMeta.minConsumption ?? 0)
+                      .toStringAsFixed(fraction),
+                ),
+                _mr(
+                  'DMaxC',
+                  (controller.calculationService.dailyMeta.maxConsumption ?? 0)
+                      .toStringAsFixed(fraction),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  TableRow _mr(String label, String val) {
+    return TableRow(
+      children: [
+        Text('$label:'),
+        Text(val),
+      ],
     );
   }
 }

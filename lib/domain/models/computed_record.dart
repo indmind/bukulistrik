@@ -96,6 +96,24 @@ class ComputedRecord extends Equatable {
     return memoizationService.memoize(record, 'fromLastRecordCost', cost);
   }
 
+  double get minutelyUsage {
+    final memoized = memoizationService.getMemoized(record, 'minutelyUsage');
+
+    if (memoized is double) {
+      return memoized;
+    }
+
+    if (isFirst) {
+      return fromLastRecordUsage / 24 / 60;
+    }
+
+    final duration = record.createdAt.difference(prevRecord!.record.createdAt);
+
+    final usage = fromLastRecordUsage / duration.inMinutes;
+
+    return memoizationService.memoize(record, 'minutelyUsage', usage);
+  }
+
   double get hourlyUsage {
     final memoized = memoizationService.getMemoized(record, 'hourlyUsage');
 
@@ -103,13 +121,7 @@ class ComputedRecord extends Equatable {
       return memoized;
     }
 
-    if (isFirst) {
-      return fromLastRecordUsage / 24;
-    }
-
-    final duration = record.createdAt.difference(prevRecord!.record.createdAt);
-
-    final usage = fromLastRecordUsage / duration.inHours;
+    final usage = minutelyUsage * 60;
 
     return memoizationService.memoize(record, 'hourlyUsage', usage);
   }

@@ -24,7 +24,6 @@ class HomePageController extends GetxController {
   RxBool showBackToTopButton = false.obs;
   RxDouble lifetimeAverageConsumption = 0.0.obs;
   Rx<ComputedRecord?> lastComputedRecord = Rx(null);
-  RxString calculationTime = ''.obs;
   RxList<ComputedRecord> computedRecords = <ComputedRecord>[].obs;
 
   Rx<ChartRange> chartRage = ChartRange.week.obs;
