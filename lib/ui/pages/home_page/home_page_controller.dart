@@ -24,7 +24,6 @@ class HomePageController extends GetxController {
   RxBool showBackToTopButton = false.obs;
   RxDouble lifetimeAverageConsumption = 0.0.obs;
   Rx<ComputedRecord?> lastComputedRecord = Rx(null);
-  RxString calculationTime = ''.obs;
   RxList<ComputedRecord> computedRecords = <ComputedRecord>[].obs;
 
   Rx<ChartRange> chartRage = ChartRange.week.obs;
@@ -181,7 +180,8 @@ class HomePageController extends GetxController {
   }
 
   void updateData() async {
-    lifetimeAverageConsumption.value = calculationService.averageConsumption;
+    lifetimeAverageConsumption.value =
+        calculationService.dailyMeta.averageConsumption ?? 0;
 
     computedRecords.value =
         calculationService.computedRecords.reversed.toList();

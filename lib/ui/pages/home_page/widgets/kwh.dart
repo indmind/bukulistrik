@@ -5,12 +5,14 @@ class Kwh extends StatelessWidget {
   final double value;
   final double size;
   final TextStyle? style;
+  final int fractions;
 
   const Kwh({
     Key? key,
     required this.value,
     this.size = 16,
     this.style,
+    this.fractions = 2,
   }) : super(key: key);
 
   @override
@@ -23,7 +25,7 @@ class Kwh extends StatelessWidget {
 
     return RichText(
       text: TextSpan(
-        text: value.toStringAsFixed(2),
+        text: value.toStringAsFixed(fractions),
         style: mergedStyle,
         children: [
           TextSpan(
