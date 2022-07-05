@@ -48,6 +48,8 @@ class CalculationService extends GetxService {
   //   calculate();
   // }
 
+  ComputedRecord? get lastComputedRecord => computedRecords.last;
+
   /// This method is used to calculate total consumption
   Future<void> calculate([List<Record>? availableRecords]) async {
     Logger.d("CalculationService.calculate");
@@ -127,28 +129,8 @@ class CalculationService extends GetxService {
     list.last.initialize();
   }
 
-  double? minNull(double? a, double? b) {
-    if (a == null && b != null) {
-      return b;
-    } else if (b == null && a != null) {
-      return a;
-    } else if (a != null && b != null) {
-      return min(a, b);
-    } else {
-      return null;
-    }
-  }
-
-  double? maxNull(double? a, double? b) {
-    if (a == null && b != null) {
-      return b;
-    } else if (b == null && a != null) {
-      return a;
-    } else if (a != null && b != null) {
-      return max(a, b);
-    } else {
-      return null;
-    }
+  ComputedRecord? computedRecordFor(Record record) {
+    return computedRecords.firstWhereOrNull((cr) => cr.record.id == record.id);
   }
 
   Color calculateColor(
@@ -199,7 +181,7 @@ class CalculationService extends GetxService {
     return calculateColor(
       usage,
       dailyMeta.minConsumption ?? 0,
-      dailyMeta.averageConsumption ?? 0,
+      dailyMeta.averageConsumption,
       dailyMeta.maxConsumption ?? 0,
     );
   }
@@ -208,7 +190,7 @@ class CalculationService extends GetxService {
     return calculateColor(
       usage,
       hourlyMeta.minConsumption ?? 0,
-      hourlyMeta.averageConsumption ?? 0,
+      hourlyMeta.averageConsumption,
       hourlyMeta.maxConsumption ?? 0,
     );
   }

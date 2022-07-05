@@ -181,7 +181,7 @@ class HomePageController extends GetxController {
 
   void updateData() async {
     lifetimeAverageConsumption.value =
-        calculationService.dailyMeta.averageConsumption ?? 0;
+        calculationService.dailyMeta.averageConsumption;
 
     computedRecords.value =
         calculationService.computedRecords.reversed.toList();

@@ -220,8 +220,7 @@ class HomePageView extends GetView<HomePageController> {
 
                         // difference from average consumption
                         final diff = (controller.calculationService.dailyMeta
-                                    .averageConsumption ??
-                                0) -
+                                .averageConsumption) -
                             cr.dailyUsage;
                         final color = controller.calculationService
                             .calculateDailyUsageColor(cr.dailyUsage);
