@@ -4,6 +4,8 @@ import 'package:bukulistrik/domain/services/calculation_service.dart';
 import 'package:bukulistrik/domain/services/record_service.dart';
 import 'package:bukulistrik/ui/pages/home_page/home_page_tutorial.dart';
 import 'package:bukulistrik/ui/pages/home_page/widgets/add_first_record_bottom_sheet.dart';
+import 'package:bukulistrik/ui/theme/helper.dart';
+import 'package:bukulistrik/ui/theme/spacing.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
@@ -181,7 +183,7 @@ class HomePageController extends GetxController {
 
   void updateData() async {
     lifetimeAverageConsumption.value =
-        calculationService.dailyMeta.averageConsumption ?? 0;
+        calculationService.dailyMeta.averageConsumption;
 
     computedRecords.value =
         calculationService.computedRecords.reversed.toList();
@@ -228,5 +230,40 @@ class HomePageController extends GetxController {
 
   void setRage(ChartRange range) {
     chartRage.value = range;
+  }
+
+  Future<void> onAddRecord() async {
+    final lastRc = lastComputedRecord.value;
+
+    if (lastRc != null && Helper.isToday(lastRc.record.createdAt)) {
+      final confirmed = await Get.dialog<bool>(
+        AlertDialog(
+          title: const Text("Peringatan"),
+          insetPadding: Spacing.p8 * 2,
+          titlePadding: Spacing.p8,
+          contentPadding: Spacing.px8,
+          content: const Text(
+            "Anda sudah menambahkan catatan untuk hari ini.\n"
+            "Sebaiknya tambahkan lagi besok di jam yang sama agar data menjadi lebih akurat.",
+          ),
+          actions: [
+            TextButton(
+              child: const Text("Tetap tambah"),
+              onPressed: () => Get.back(result: true),
+            ),
+            ElevatedButton(
+              child: const Text("Ok"),
+              onPressed: () => Get.back(result: false),
+            ),
+          ],
+        ),
+      );
+
+      if (confirmed != true) {
+        return;
+      }
+    }
+
+    Get.toNamed('/add-record');
   }
 }

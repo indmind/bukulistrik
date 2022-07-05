@@ -2,20 +2,18 @@ import 'dart:math';
 
 /// This class stores calculation meta such as average, min, and max
 class CalculationMeta {
-  double? averageConsumption;
   double? minConsumption;
   double? maxConsumption;
   double? totalConsumption;
-  double? avgCost;
   double? minCost;
   double? maxCost;
   double? totalCost;
 
+  int _dataCount = 0;
+
   CalculationMeta({
-    this.averageConsumption,
     this.minConsumption,
     this.maxConsumption,
-    this.avgCost,
     this.minCost,
     this.maxCost,
   });
@@ -24,12 +22,7 @@ class CalculationMeta {
     required double consumption,
     required double cost,
   }) {
-    // calculate average consumption
-    if (averageConsumption == null) {
-      averageConsumption = consumption;
-    } else {
-      averageConsumption = (averageConsumption! + consumption) / 2;
-    }
+    _dataCount++;
 
     // calculate min consumption
     if (minConsumption == null) {
@@ -50,13 +43,6 @@ class CalculationMeta {
       totalConsumption = consumption;
     } else {
       totalConsumption = totalConsumption! + consumption;
-    }
-
-    // calculate average cost
-    if (avgCost == null) {
-      avgCost = cost;
-    } else {
-      avgCost = (avgCost! + cost) / 2;
     }
 
     // calculate min cost
@@ -81,15 +67,24 @@ class CalculationMeta {
     }
   }
 
+  double get averageConsumption {
+    if (_dataCount == 0 || totalConsumption == null) return 0;
+    return totalConsumption! / _dataCount;
+  }
+
+  double get averageCost {
+    if (_dataCount == 0 || totalCost == null) return 0;
+    return totalCost! / _dataCount;
+  }
+
   void reset() {
-    averageConsumption = null;
     minConsumption = null;
     maxConsumption = null;
     totalConsumption = null;
-    avgCost = null;
     minCost = null;
     maxCost = null;
     totalCost = null;
+    _dataCount = 0;
   }
 
   // set min(double value) {

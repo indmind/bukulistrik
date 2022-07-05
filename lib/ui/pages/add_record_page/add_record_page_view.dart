@@ -73,7 +73,7 @@ class AddRecordPageView extends GetView<AddRecordPageController> {
                       labelStyle: TextStyle(
                         color: Get.theme.colorScheme.onBackground,
                       ),
-                      hintText: "Contoh: 78.21",
+                      hintText: controller.availableKwhExample,
                       helperText:
                           "Nilai kW H yang tertera pada meteran listrik rumah Anda",
                       helperMaxLines: 2,
