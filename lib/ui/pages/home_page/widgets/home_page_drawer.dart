@@ -42,6 +42,7 @@ class HomePageDrawer extends StatelessWidget {
           ListTile(
             title: const Text('Tutorial antar muka'),
             leading: const Text('📱'),
+            minLeadingWidth: 18,
             onTap: () async {
               await GetStorage().write(HomePageTutorial.storageKey, false);
               Get.back();
@@ -51,6 +52,7 @@ class HomePageDrawer extends StatelessWidget {
           ListTile(
             title: const Text('Tutorial tambah data'),
             leading: const Text('✋'),
+            minLeadingWidth: 18,
             onTap: () async {
               await GetStorage().write(AddRecordPageTutorial.storageKey, false);
               Get.back();
@@ -61,6 +63,7 @@ class HomePageDrawer extends StatelessWidget {
           ListTile(
             title: const Text('Lisensi'),
             leading: const Text('🙏'),
+            minLeadingWidth: 18,
             onTap: () => showLicensePage(
               context: context,
               applicationIcon: Padding(
@@ -74,9 +77,16 @@ class HomePageDrawer extends StatelessWidget {
               ),
             ),
           ),
+          const Divider(),
           ListTile(
-            title: const Text('Keluar'),
+            title: Text(
+              'Keluar',
+              style: TextStyle(
+                color: Get.theme.colorScheme.error,
+              ),
+            ),
             leading: const Text('🚪'),
+            minLeadingWidth: 18,
             onTap: () {
               Get.find<AuthController>().signOut();
             },
