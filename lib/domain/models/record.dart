@@ -43,7 +43,7 @@ class Record extends Equatable {
       );
 
   @override
-  List<Object> get props => [createdAt, availableKwh];
+  List<Object> get props => [id ?? '', createdAt, availableKwh];
 
   //copyWith
   Record copyWith({

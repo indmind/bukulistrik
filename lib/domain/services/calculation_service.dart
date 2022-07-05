@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:math';
 
+import 'package:bukulistrik/common/logger.dart';
+import 'package:bukulistrik/domain/models/calculation_meta.dart';
 import 'package:bukulistrik/domain/models/computed_record.dart';
 import 'package:bukulistrik/domain/models/record.dart';
 import 'package:bukulistrik/domain/services/house_service.dart';
@@ -16,13 +18,13 @@ class CalculationService extends GetxService {
   final HouseService houseService = Get.find();
   final RecordService recordService = Get.find();
 
-  /// This variable stores average consumption
-  double averageConsumption = 0.0;
-  double minConsumption = 0.0;
-  double maxConsumption = 0.0;
+  final hourlyMeta = CalculationMeta();
+  final dailyMeta = CalculationMeta();
 
   /// This variable stores computed records
   final RxList<ComputedRecord> computedRecords = <ComputedRecord>[].obs;
+
+  final Rx<Duration> calculationTime = Duration.zero.obs;
 
   StreamSubscription<List<Record>>? _recordSubscription;
 
@@ -46,15 +48,15 @@ class CalculationService extends GetxService {
   //   calculate();
   // }
 
+  ComputedRecord? get lastComputedRecord => computedRecords.last;
+
   /// This method is used to calculate total consumption
   Future<void> calculate([List<Record>? availableRecords]) async {
-    debugPrint("CalculationService.calculate");
+    Logger.d("CalculationService.calculate");
 
     final records = availableRecords ?? await recordService.getCurrentRecords();
     final memoization = Get.find<MemoizationService>();
     final performance = Get.find<FirebasePerformance>();
-
-    double totalConsumption = 0.0;
 
     Trace calculationTrace = performance.newTrace('record-calculation-trace');
     await calculationTrace.start();
@@ -74,21 +76,19 @@ class CalculationService extends GetxService {
       _copyComputedTo(tempComputedRecords, records[i], memoization, i == 0);
     }
 
-    totalConsumption = tempComputedRecords.fold<double>(0, (value, element) {
-      final consumption = element.dailyUsage;
+    hourlyMeta.reset();
+    dailyMeta.reset();
 
-      minConsumption =
-          consumption < minConsumption ? consumption : minConsumption;
-      maxConsumption =
-          consumption > maxConsumption ? consumption : maxConsumption;
+    for (var record in tempComputedRecords) {
+      hourlyMeta.calculate(
+        consumption: record.hourlyUsage,
+        cost: record.hourlyCost,
+      );
 
-      return value + consumption;
-    });
-
-    if (tempComputedRecords.isNotEmpty) {
-      averageConsumption = totalConsumption / tempComputedRecords.length;
-    } else {
-      averageConsumption = 0;
+      dailyMeta.calculate(
+        consumption: record.dailyUsage,
+        cost: record.dailyCost,
+      );
     }
 
     // IMPORTANT: update computed records last, to make sure all data is updated
@@ -101,7 +101,10 @@ class CalculationService extends GetxService {
 
     await calculationTrace.stop();
     stopwatch.stop();
-    debugPrint(
+
+    calculationTime.value = stopwatch.elapsed;
+
+    Logger.d(
       "CalculationService.calculate took ${stopwatch.elapsedMilliseconds} ms (${computedRecords.length} records)",
     );
   }
@@ -126,17 +129,26 @@ class CalculationService extends GetxService {
     list.last.initialize();
   }
 
-  Color calculateColor(double kwh) {
+  ComputedRecord? computedRecordFor(Record record) {
+    return computedRecords.firstWhereOrNull((cr) => cr.record.id == record.id);
+  }
+
+  Color calculateColor(
+    double kwh,
+    double lowerBound,
+    double midBound,
+    double upperBound,
+  ) {
     // get color based from averageConsumption
     // if kwh == averageConsumption, return white
     // if kwh > averageConsumption, return redder the more the difference is, max follows maxConsumption
     // if kwh < averageConsumption, return greener the more the difference is, max follows minConsumption
 
-    double diff = calculateDiff(kwh);
+    double diff = midBound - kwh;
 
     if (diff.abs().toPrecision(2) < 0.1 ||
-        averageConsumption == minConsumption ||
-        averageConsumption == maxConsumption) {
+        midBound == lowerBound ||
+        midBound == upperBound) {
       return Get.theme.colorScheme.secondary;
     }
 
@@ -145,8 +157,8 @@ class CalculationService extends GetxService {
         const Color.fromARGB(255, 181, 242, 183),
         Get.theme.colorScheme.tertiary,
       ],
-      rangeStart: min(averageConsumption, minConsumption),
-      rangeEnd: max(averageConsumption, minConsumption),
+      rangeStart: max(midBound, lowerBound),
+      rangeEnd: min(midBound, lowerBound),
     );
 
     final aboveAvgSpectrum = Rainbow(
@@ -154,19 +166,32 @@ class CalculationService extends GetxService {
         const Color.fromARGB(255, 255, 145, 185),
         Get.theme.colorScheme.error,
       ],
-      rangeStart: min(averageConsumption, maxConsumption),
-      rangeEnd: max(averageConsumption, maxConsumption),
+      rangeStart: min(midBound, upperBound),
+      rangeEnd: max(midBound, upperBound),
     );
 
-    if (kwh > averageConsumption) {
+    if (kwh > midBound) {
       return aboveAvgSpectrum[kwh];
     } else {
       return belowAvgSpectrum[kwh];
     }
   }
 
-  /// Calculate the difference from averageConsumption
-  double calculateDiff(double kwh) {
-    return averageConsumption - kwh;
+  Color calculateDailyUsageColor(double usage) {
+    return calculateColor(
+      usage,
+      dailyMeta.minConsumption ?? 0,
+      dailyMeta.averageConsumption,
+      dailyMeta.maxConsumption ?? 0,
+    );
+  }
+
+  Color calculateHourlyUsageColor(double usage) {
+    return calculateColor(
+      usage,
+      hourlyMeta.minConsumption ?? 0,
+      hourlyMeta.averageConsumption,
+      hourlyMeta.maxConsumption ?? 0,
+    );
   }
 }

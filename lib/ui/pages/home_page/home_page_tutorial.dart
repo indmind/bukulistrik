@@ -83,28 +83,31 @@ class HomePageTutorial {
 
     targets.add(Helper.buildSimpleTarget(
       usageChartRangeKey,
-      "Ini adalah pilihan rentang waktu untuk menyesuaikan tampilan grafik dan tampilan rata-rata penggunaan",
+      "Ini adalah pilihan rentang waktu untuk menyesuaikan tampilan grafik dan tampilan rata-rata penggunaan.",
     ));
 
     targets.add(Helper.buildSimpleTarget(
       averageConsumptionKey,
-      "Ini adalah rata-rata penggunaan listrik dalam rentang waktu tertentu satuan kWh H",
+      "Ini adalah rata-rata penggunaan listrik dalam rentang waktu tertentu satuan kWh H.\n\n"
+      "Tanda akan menyesuaikan dengan rata-rata penggunaan secara keseluruhan.",
     ));
 
     targets.add(Helper.buildSimpleTarget(
       lifetimeAverageConsumptionKey,
-      "Ini adalah rata-rata penggunaan listrik keseluruhan",
+      "Ini adalah rata-rata penggunaan listrik secara keseluruhan.",
     ));
 
     targets.add(Helper.buildSimpleTarget(
       usageRecordKey,
-      "Ini adalah daftar penggunaan listrik, Anda dapat menekan item untuk mengubah data",
+      "Ini adalah data penggunaan listrik per HARI.\n\n"
+      "Nilai ini dihitung berdasarkan rata-rata penggunaan listrik per menit sejak catatan terakhir.",
       contentAlign: ContentAlign.top,
     ));
 
     targets.add(Helper.buildSimpleTarget(
       addRecordKey,
-      "Anda dapat menambahkan catatan dengan cara menekan tombol berikut",
+      "Anda dapat menambahkan catatan dengan cara menekan tombol berikut."
+      "\n\nSebaiknya catatlah meteran listrik Anda setiap hari pada jam yang sama untuk mendapatkan data yang akurat.",
       shape: ShapeLightFocus.Circle,
       contentAlign: ContentAlign.top,
     ));

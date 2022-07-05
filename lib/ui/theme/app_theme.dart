@@ -10,7 +10,7 @@ final kColorScheme = const ColorScheme.light().copyWith(
   onSecondary: Colors.white,
   shadow: Colors.black.withOpacity(0.05),
   tertiary: const Color(0xFF02A966),
-  error: const Color(0xFFE35300),
+  error: const Color(0xFFDA2323),
   onBackground: const Color(0xFF232323),
 );
 
