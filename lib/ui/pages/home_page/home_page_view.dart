@@ -316,6 +316,33 @@ class HomePageView extends GetView<HomePageController> {
         debugPrint('computed records is empty');
       }
 
+      List<ComputedRecord> data = controller.displayedData;
+
+      double minimum = 0;
+      double maximum = 0;
+
+      if (data.isEmpty) {
+        minimum = 0;
+        maximum = 0;
+      } else {
+        minimum = data.first.dailyUsage;
+        maximum = data.last.dailyUsage;
+
+        for (final cr in data) {
+          if (cr.dailyUsage < minimum) {
+            minimum = cr.dailyUsage;
+          }
+
+          if (cr.dailyUsage > maximum) {
+            maximum = cr.dailyUsage;
+          }
+        }
+
+        // add padding
+        minimum -= 0.2;
+        maximum += 0.2;
+      }
+
       final range = controller.chartRage.value;
 
       return Container(
@@ -324,8 +351,8 @@ class HomePageView extends GetView<HomePageController> {
         color: Get.theme.colorScheme.primary,
         child: SfCartesianChart(
           key: ValueKey(range),
-          series: <LineSeries<ComputedRecord, DateTime>>[
-            LineSeries(
+          series: <SplineSeries<ComputedRecord, DateTime>>[
+            SplineSeries(
               dataSource: controller.displayedData,
               onRendererCreated: (chartController) {
                 controller.chartController = chartController;
@@ -334,6 +361,7 @@ class HomePageView extends GetView<HomePageController> {
                   double.parse(cp.dailyUsage.toStringAsFixed(2)),
               xValueMapper: (ComputedRecord cp, _) => cp.record.createdAt,
               xAxisName: 'Date',
+              yAxisName: 'Usage',
               color: Get.theme.colorScheme.onPrimary.withOpacity(0.75),
               width: 2,
               dataLabelSettings: DataLabelSettings(
@@ -357,6 +385,8 @@ class HomePageView extends GetView<HomePageController> {
           ),
           primaryYAxis: NumericAxis(
             isVisible: false,
+            minimum: minimum,
+            maximum: maximum,
           ),
           borderWidth: 0,
           plotAreaBorderWidth: 0,
