@@ -1,4 +1,6 @@
+import 'package:bukulistrik/common/state_status.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
@@ -64,5 +66,50 @@ abstract class Helper {
         ),
       ],
     );
+  }
+
+  static Color positiveWhenUp(StateStatus status) {
+    switch (status) {
+      case StateStatus.up:
+        return Get.theme.colorScheme.primary;
+      case StateStatus.down:
+        return Get.theme.colorScheme.error;
+      case StateStatus.none:
+        return Get.theme.colorScheme.secondary;
+    }
+  }
+
+  static Color positiveWhenDown(StateStatus status) {
+    switch (status) {
+      case StateStatus.up:
+        return Get.theme.colorScheme.error;
+      case StateStatus.down:
+        return Get.theme.colorScheme.primary;
+      case StateStatus.none:
+        return Get.theme.colorScheme.secondary;
+    }
+  }
+
+  static Icon iconFromStatus(StateStatus status, [bool greenPositive = true]) {
+    switch (status) {
+      case StateStatus.up:
+        return Icon(
+          Icons.arrow_upward_rounded,
+          color:
+              greenPositive ? positiveWhenUp(status) : positiveWhenDown(status),
+        );
+      case StateStatus.down:
+        return Icon(
+          Icons.arrow_downward_rounded,
+          color:
+              greenPositive ? positiveWhenUp(status) : positiveWhenDown(status),
+        );
+      case StateStatus.none:
+        return Icon(
+          Icons.remove_rounded,
+          color:
+              greenPositive ? positiveWhenUp(status) : positiveWhenDown(status),
+        );
+    }
   }
 }

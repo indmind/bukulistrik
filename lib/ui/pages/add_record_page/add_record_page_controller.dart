@@ -3,6 +3,7 @@ import 'package:bukulistrik/domain/models/record.dart';
 import 'package:bukulistrik/domain/services/ad_service.dart';
 import 'package:bukulistrik/domain/services/calculation_service.dart';
 import 'package:bukulistrik/domain/services/record_service.dart';
+import 'package:bukulistrik/routes.dart';
 import 'package:bukulistrik/ui/pages/add_record_page/add_record_page_tutorial.dart';
 import 'package:bukulistrik/ui/theme/helper.dart';
 import 'package:bukulistrik/ui/theme/spacing.dart';
@@ -174,14 +175,14 @@ class AddRecordPageController extends GetxController {
 
       await adService.interstitialAd.value?.show();
 
-      Get.back();
+      Get.until((_) => Get.currentRoute == Routes.home.name);
     }
   }
 
   deleteRecord() {
     if (record != null) {
       Get.find<RecordService>().delete(record!);
-      Get.back();
+      Get.until((_) => Get.currentRoute == Routes.home.name);
     }
   }
 }

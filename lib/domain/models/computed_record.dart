@@ -1,3 +1,4 @@
+import 'package:bukulistrik/common/state_status.dart';
 import 'package:bukulistrik/domain/models/record.dart';
 import 'package:bukulistrik/domain/services/memoization_service.dart';
 import 'package:equatable/equatable.dart';
@@ -100,6 +101,10 @@ class ComputedRecord extends Equatable {
         cost;
   }
 
+  Duration get durationFromLastRecord => isFirst
+      ? Duration.zero
+      : record.createdAt.difference(prevRecord!.record.createdAt);
+
   double get minutelyUsage {
     final memoized = memoizationService?.getMemoized(record, 'minutelyUsage');
 
@@ -111,7 +116,7 @@ class ComputedRecord extends Equatable {
       return fromLastRecordUsage / 24 / 60;
     }
 
-    final duration = record.createdAt.difference(prevRecord!.record.createdAt);
+    final duration = durationFromLastRecord;
 
     final usage = fromLastRecordUsage / duration.inMinutes;
 
@@ -169,6 +174,89 @@ class ComputedRecord extends Equatable {
 
   @override
   List<Object?> get props => [record, prevRecord];
+
+  StateStatus _getStatus(double val, double prevVal) {
+    if (val > prevVal) {
+      return StateStatus.up;
+    } else if (val < prevVal) {
+      return StateStatus.down;
+    } else {
+      return StateStatus.none;
+    }
+  }
+
+  // status changes (no need to memoize because it's only using computed records)
+  StateStatus get fromLastRecordUsageStatus {
+    if (isFirst) {
+      return StateStatus.none;
+    }
+
+    return _getStatus(fromLastRecordUsage, prevRecord!.fromLastRecordUsage);
+  }
+
+  StateStatus get usageFromLastRecordCostStatus {
+    if (isFirst) {
+      return StateStatus.none;
+    }
+
+    return _getStatus(fromLastRecordCost, prevRecord!.fromLastRecordCost);
+  }
+
+  StateStatus get minutelyUsageStatus {
+    if (isFirst) {
+      return StateStatus.none;
+    }
+
+    return _getStatus(minutelyUsage, prevRecord!.minutelyUsage);
+  }
+
+  StateStatus get hourlyUsageStatus {
+    if (isFirst) {
+      return StateStatus.none;
+    }
+
+    return _getStatus(hourlyUsage, prevRecord!.hourlyUsage);
+  }
+
+  StateStatus get hourlyCostStatus {
+    if (isFirst) {
+      return StateStatus.none;
+    }
+
+    return _getStatus(hourlyCost, prevRecord!.hourlyCost);
+  }
+
+  StateStatus get dailyUsageStatus {
+    if (isFirst) {
+      return StateStatus.none;
+    }
+
+    return _getStatus(dailyUsage, prevRecord!.dailyUsage);
+  }
+
+  StateStatus get dailyCostStatus {
+    if (isFirst) {
+      return StateStatus.none;
+    }
+
+    return _getStatus(dailyCost, prevRecord!.dailyCost);
+  }
+
+  StateStatus get totalCostPerKwhStatus {
+    if (isFirst) {
+      return StateStatus.none;
+    }
+
+    return _getStatus(totalCostPerKwh, prevRecord!.totalCostPerKwh);
+  }
+
+  StateStatus get costOfAvailableKwhStatus {
+    if (isFirst) {
+      return StateStatus.none;
+    }
+
+    return _getStatus(costOfAvailableKwh, prevRecord!.costOfAvailableKwh);
+  }
 
   /// call all getters that need to be memoized
   void initialize() {
