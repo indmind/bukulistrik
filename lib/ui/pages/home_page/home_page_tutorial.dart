@@ -1,5 +1,6 @@
 import 'package:bukulistrik/common/logger.dart';
 import 'package:bukulistrik/ui/theme/helper.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
@@ -39,7 +40,11 @@ class HomePageTutorial {
       paddingFocus: 10,
       opacityShadow: 0.8,
       onClickOverlay: (target) {
-        Logger.d('HomePageTutorial: onClickOverlay');
+        if (target.identify == targets.last.identify) {
+          Logger.d('HomePageTutorial: finish');
+          Get.find<FirebaseAnalytics>()
+              .logEvent(name: 'home_page_tutorial_finish');
+        }
 
         tutorialCoachMark?.next();
       },
@@ -50,6 +55,7 @@ class HomePageTutorial {
     GetStorage().write(storageKey, true);
 
     Logger.d('HomePageTutorial: start');
+    Get.find<FirebaseAnalytics>().logEvent(name: 'home_page_tutorial_start');
   }
 
   void initTargets() {

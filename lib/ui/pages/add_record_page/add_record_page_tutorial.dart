@@ -1,5 +1,6 @@
 import 'package:bukulistrik/common/logger.dart';
 import 'package:bukulistrik/ui/theme/helper.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
@@ -37,7 +38,12 @@ class AddRecordPageTutorial {
       paddingFocus: 10,
       opacityShadow: 0.8,
       onClickOverlay: (target) async {
-        Logger.d('AddRecordPageTutorial: onClickOverlay');
+        if (target.identify == targets.last.identify) {
+          Logger.d('AddRecordPageTutorial: finish');
+
+          Get.find<FirebaseAnalytics>()
+              .logEvent(name: 'add_record_page_tutorial_finish');
+        }
 
         if (target.keyTarget == noteKey) {
           Scrollable.ensureVisible(
@@ -62,6 +68,8 @@ class AddRecordPageTutorial {
     GetStorage().write(storageKey, true);
 
     Logger.d('AddRecordPageTutorial: start');
+    Get.find<FirebaseAnalytics>()
+        .logEvent(name: 'add_record_page_tutorial_start');
   }
 
   void initTargets() {
