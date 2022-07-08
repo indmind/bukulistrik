@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class Kwh extends StatelessWidget {
-  final double value;
+  final double? value;
   final double size;
   final TextStyle? style;
   final int fractions;
@@ -25,7 +25,7 @@ class Kwh extends StatelessWidget {
 
     return RichText(
       text: TextSpan(
-        text: value.toStringAsFixed(fractions),
+        text: value != null ? value!.toStringAsFixed(fractions) : '-',
         style: mergedStyle,
         children: [
           TextSpan(

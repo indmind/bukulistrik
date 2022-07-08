@@ -48,7 +48,8 @@ class CalculationService extends GetxService {
   //   calculate();
   // }
 
-  ComputedRecord? get lastComputedRecord => computedRecords.last;
+  ComputedRecord? get lastComputedRecord =>
+      computedRecords.isNotEmpty ? computedRecords.last : null;
 
   /// This method is used to calculate total consumption
   Future<void> calculate([List<Record>? availableRecords]) async {

@@ -25,8 +25,11 @@ class ComputedRecordListItem extends StatelessWidget {
       children: [
         ListTile(
           onTap: () {
-            Get.toNamed('/add-record', arguments: {
-              'record': computedRecord.record,
+            // Get.toNamed('/add-record', arguments: {
+            //   'record': computedRecord.record,
+            // });
+            Get.toNamed('/detail', arguments: {
+              'computedRecord': computedRecord,
             });
           },
           leading: CircleAvatar(
